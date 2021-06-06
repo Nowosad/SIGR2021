@@ -1,6 +1,6 @@
 ---
-title: ""
-subtitle: ""
+title: "Image processing and all things raster"
+subtitle: "A workshop on image processing and raster analysis with R"
 author: "Jakub Nowosad & Robin Lovelace"
 date: ""
 output:

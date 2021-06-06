@@ -1,6 +1,6 @@
 ---
-title: ""
-subtitle: ""
+title: "GIS and mapping"
+subtitle: "A lecture on the GIS and mapping ecosystem of R"
 author: "Robin Lovelace & Jakub Nowosad"
 date: ""
 output:
