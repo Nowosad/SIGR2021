@@ -1,0 +1,121 @@
+/*For 4:3 provide size: 908px 681px;.*/
+/*1210px 681px*/
+
+/*@page {
+  size: 908px 681px;
+  margin: 0;
+}*/
+.tiny .remark-code { /*Change made here*/
+  font-size: 70% !important;
+}
+
+quote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+quote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+quote p {
+  display: inline;
+}
+
+@page {
+  size: 1210px 681px;
+  margin: 0;
+}
+
+@media print {
+  .remark-slide-scaler {
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(1) !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+}
+
+/* links font*/
+a {
+color: #2199e8;
+}
+
+/* caption font*/
+.caption {
+	font-style: italic;
+  color: #606090;
+	font-size: 90%;
+}
+
+.lc {
+  width: 30%;
+  height: 92%;
+  float: left;
+}
+
+.rc {
+  width: 70%;
+  float: right;
+  height: 92%;
+}
+
+.lc2 {
+  width: 70%;
+  float: left;
+  height: 92%;
+
+}
+
+.rc2 {
+  width: 30%;
+  height: 92%;
+  float: right;
+}
+
+/* three-column layout */
+.left3-column {
+  width: 70%;
+  height: 100%;
+  float: left;
+  text-align: center;
+  margin: 0 auto;
+}
+.center3-column {
+  width: 10%;
+  height: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+.right3-column {
+  width: 30%;
+  float: right;
+  text-align: right;
+  margin: 0 auto;
+}
+
+/* increases table size*/
+.table{
+  width:10%;
+  font-size: 600px;
+}
+
+/* custom.css */
+.left-code {
+  color: #777;
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}

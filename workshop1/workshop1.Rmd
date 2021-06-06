@@ -1,0 +1,20 @@
+---
+title: ""
+subtitle: ""
+author: "Robin Lovelace & Jakub Nowosad"
+date: ""
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["xaringan-themer.css", "style.css"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: 16:9
+      titleSlideClass: [left, bottom, inverse]
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+options(htmltools.dir.version = FALSE)
+```
