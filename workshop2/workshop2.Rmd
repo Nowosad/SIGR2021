@@ -18,3 +18,95 @@ output:
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
 ```
+
+# Input
+
+
+---
+class: inverse, left, bottom
+# Map algebra
+
+Used for a various task related to spatial raster data.
+
+It can be divided into four groups:
+
+1. **Local** - per-cell operations
+2. **Focal (neighborhood operations)** - most often the output cell value is the result of a 3 x 3 input cell block
+3. **Zonal operations** - to summarize raster values for some zones (usually irregular areas)
+4. **Global** - to summarize raster values for one or several rasters
+
+---
+# Local operations
+
+- raster algebra
+- replacing values
+- reclassification
+- operations on many layers (e.g., ndvi)
+
+
+---
+# Focal operations
+
+
+---
+# Zonal operations
+
+
+---
+# Global operations
+
+- global + freq + areas (cellSize())
+
+---
+class: inverse, left, bottom
+# Exercises 1
+
+```{r child = 'exercises1.Rmd'}
+```
+
+---
+class: inverse, left, bottom
+# Transformations
+
+- selecting layers
+- reprojecting + merging/mosaicing raster+ resampling
+
+---
+class: inverse, left, bottom
+# Raster-vector interactions
+
+- raster cropping and masking
+- raster extraction - by points, lines, and polygons
+- rasterization - points, polygons
+- vectorization - polygons, contours
+
+---
+class: inverse, left, bottom
+# Output
+
+---
+class: inverse, left, bottom
+# Exercises 2
+
+```{r child = 'exercises2.Rmd'}
+```
+
+---
+class: inverse, left, bottom
+# Raster analysis
+
+- autocor - Compute global or local spatial autocorrelation
+- localFun - Local association (using neighborhoods) functions
+- predict
+- interpolate
+
+---
+class: inverse, left, bottom
+# Exercises 3
+
+```{r child = 'exercises3.Rmd'}
+```
+
+---
+class: inverse, left, bottom
+# Summary
