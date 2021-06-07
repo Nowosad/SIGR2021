@@ -1,0 +1,70 @@
+1) Find the file path of the `nz_elev.tif` data using the following code: `system.file("raster/nz_elev.tif", package = "spDataLarge")`. 
+Read this file into R.
+What is the resolution of the data?
+
+```{r}
+library(terra)
+nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
+```
+
+2) Create and customize a mpa based on the `nz_elev.tif` dataset. 
+Save the result to a `.png` file.
+
+```{r}
+library(tmap)
+tm = tm_shape(nz_elev) +
+  tm_raster(style = "cont", title = "Elevation (m als)",
+            palette = "-Spectral", midpoint = 1000) +
+  tm_graticules(x = seq(165, 179, by = 2)) +
+  tm_scale_bar() +
+  tm_compass(position = c("right", "top")) +
+  tm_credits("Data downloaded using the elevatr package") +
+  tm_layout(bg.color = "lightblue")
+tmap_save(tm, "tm.png")
+```
+
+3) Replace values below 0 to 1 (depressions), values between 0 and 300 to 2 (plains), values between 300 and 600 to 3 (hills), and values between 600 and the maximum value to 4 (mountains) in the `nz_elev` object.
+Create a new object `nz_elev_class`.
+
+```{r}
+rcl = matrix(c(-999, 0, 1, 0, 300, 2, 300, 600, 3, 600, 9999, 4), byrow = TRUE, ncol = 3)
+nz_elev_class = classify(nz_elev, rcl)
+plot(nz_elev_class)
+```
+
+4) Look at the `focal` function documentation. 
+Apply the Laplacian and the Sobel filters on `nz_elev`.
+Compare the results visually.
+
+```{r}
+laplacian = focal(nz_elev, w = matrix(c(0,1,0,1,-4,1,0,1,0), nrow = 3))
+sobel1 = focal(nz_elev, w = matrix(c(-1,-2,-1,0,0,0,1,2,1), nrow = 3))
+sobel2 = focal(nz_elev, w = matrix(c(1,0,-1,2,0,-2,1,0,-1), nrow = 3))
+
+tm_shape(laplacian) + tm_raster(style = "cont")
+tm_shape(sobel1) + tm_raster(style = "cont")
+tm_shape(sobel2) + tm_raster(style = "cont")
+```
+
+5) Calculate an average elevation value in `nz_elev` for each category in `nz_elev_class`.
+
+```{r}
+zonal(nz_elev, nz_elev_class, fun = "mean")
+```
+
+6) Write a function to calculate the soil-adjusted vegetation index (SAVI; https://en.wikipedia.org/wiki/Soil-adjusted_vegetation_index ).
+Calculate SAVI for the Landsat 8 images for the area of Zion National Park. 
+
+```{r}
+landsat_path = system.file("raster/landsat.tif", package = "spDataLarge")
+landsat = rast(landsat_path)
+
+savi_fun = function(nir, red, L = 0.5){
+  ((1 + L) * (nir - red)) / (nir + red + L)
+}
+savi = lapp(landsat[[c(4, 3)]], fun = savi_fun)
+
+plot(savi)
+```
+
+<!-- global -->
