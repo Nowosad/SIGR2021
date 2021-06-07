@@ -1,0 +1,9 @@
+<!-- 1. resampling -->
+<!-- 2. reproject -->
+<!-- 3. moisaic? -->
+<!-- 4. cropping and masking -->
+<!-- 5. raster extraction x2? -->
+<!-- 6. rasterization -->
+<!-- 7. vectorization -->
+<!-- 8. conversion -->
+<!-- 9. saving -->

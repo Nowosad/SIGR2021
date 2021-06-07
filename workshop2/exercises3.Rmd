@@ -1,0 +1,4 @@
+<!-- 1. Global or local spatial autocorrelation -->
+<!-- 2. ?Local association functions -->
+<!-- 3. ?predict - glm + randomForest -->
+<!-- 4. ?interpolate - inverse distance weighted (IDW) -->
