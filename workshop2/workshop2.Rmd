@@ -16,14 +16,101 @@ output:
 ---
 
 ```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(fig.align = "center", cache = FALSE, fig.height = 5)
 options(htmltools.dir.version = FALSE)
 ```
 
 # Input
 
+```{r}
+srtm_path = system.file("raster/srtm.tif", package = "spDataLarge")
+srtm_path
+```
+
+---
+# Input - terra
+
+**terra** - https://rspatial.github.io/terra/reference/terra-package.html
+
+```{r, message=FALSE}
+library(terra)
+srtm = rast(srtm_path)
+srtm
+```
+
+---
+# Input - raster
+
+**raster** - https://rspatial.org/raster/ and https://rpubs.com/etiennebr/visualraster
+
+```{r, message=FALSE}
+library(raster)
+srtm_r = raster(srtm_path)
+srtm_r
+```
+
+---
+# Input - stars
+
+**stars** - https://r-spatial.github.io/stars/index.html and https://r-spatial.org/book/
+
+```{r, message=FALSE}
+library(stars)
+srtm_s = read_stars(srtm_path)
+srtm_s
+```
 
 ---
 class: inverse, left, bottom
+# Maps
+
+---
+# Maps
+
+```{r}
+plot(srtm)
+```
+
+---
+# Maps
+
+```{r}
+library(tmap)
+tm_shape(srtm) +
+  tm_raster()
+```
+
+
+---
+# Maps
+
+.pull-left[
+```{r srtmmap, fig.show='hide'}
+tm_shape(srtm) +
+  tm_graticules() +
+  tm_raster(style = "cont", 
+            title = "elevation (m a.s.l)",
+            palette = "-Spectral") +
+  tm_scale_bar(breaks = c(0, 2, 4),
+               text.size = 1) +
+  tm_credits("Jakub Nowosad, 2021") +
+  tm_layout(inner.margins = 0,
+    main.title = "Zion National Park")
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("srtmmap", "png")
+)
+```
+]
+
+---
+class: inverse, left, bottom
+# Map algebra
+
+---
 # Map algebra
 
 Used for a various task related to spatial raster data.
@@ -38,24 +125,239 @@ It can be divided into four groups:
 ---
 # Local operations
 
-- raster algebra
-- replacing values
-- reclassification
-- operations on many layers (e.g., ndvi)
+- Raster calculator
+- Replacing values
+- Reclassification
+- Operations on many layers (e.g., calculating spectral indices, such as NDVI)
 
+
+---
+# Local operations - raster calculator
+
+
+```{r}
+srtm2 = srtm + 1000
+```
+
+```{r}
+srtm3 = srtm - global(srtm, min)[[1]]
+```
+
+```{r}
+srtm4 = srtm - global(srtm, median)[[1]]
+```
+
+--
+
+```{r, purl=FALSE,echo=FALSE, message=FALSE, out.width="100%", fig.height=3.8, fig.width=12}
+library(tmap)
+tm1 = tm_shape(srtm) +
+  # tm_graticules() +
+  tm_raster(style = "cont")
+tm2 = tm_shape(srtm2) +
+  # tm_graticules() +
+  tm_raster(style = "cont")
+tm3 = tm_shape(srtm3) +
+  # tm_graticules() +
+  tm_raster(style = "cont")
+tm4 = tm_shape(srtm4) +
+  # tm_graticules() +
+  tm_raster(style = "cont")
+tmap_arrange(tm1, tm2, tm3, tm4, nrow = 1)
+```
+
+
+---
+# Local operations - replacing values
+
+
+---
+# Local operations - reclassification
+
+```{r}
+rcl = matrix(c(0, 1500, 1, 1500, 2000, 2, 2000, 9999, 3),
+             ncol = 3, byrow = TRUE)
+rcl
+```
+
+---
+# Local operations - reclassification
+
+```{r}
+srtm_recl = classify(srtm, rcl = rcl)
+```
+
+```{r, purl=FALSE,echo=FALSE}
+tmr1 = tm_shape(srtm) +
+  # tm_graticules() +
+  tm_raster(style = "cont") +
+  tm_layout(legend.frame = TRUE)
+tmr2 = tm_shape(srtm_recl) +
+  # tm_graticules() +
+  tm_raster(style = "cat") +
+  tm_layout(legend.frame = TRUE)
+tmap_arrange(tmr1, tmr2)
+```
+
+
+---
+# Local operations - reclassification
+
+https://www.mrlc.gov/data/legends/national-land-cover-database-2011-nlcd2011-legend
+
+```{r,}
+nlcd = rast(system.file("raster/nlcd2011.tif", package = "spDataLarge"))
+```
+
+```{r, warning=FALSE}
+rcl2 = matrix(c(11, 11, 1, 21, 24, 2, 31, 31, 3, 41, 43, 4, 51, 52, 5, 
+                71, 74, 7, 81, 82, 8, 90, 95, 9),
+             ncol = 3, byrow = TRUE)
+nlcd_recl = classify(nlcd, rcl = rcl2, right = NA)
+```
+
+```{r, purl=FALSE,echo=FALSE, warning=FALSE, message=FALSE}
+tmr1 = tm_shape(nlcd) +
+  # tm_graticules() +
+  tm_raster(drop.levels = TRUE) +
+  tm_layout(legend.frame = TRUE)
+tmr2 = tm_shape(nlcd_recl) +
+  # tm_graticules() +
+  tm_raster(style = "cat", palette = "Set2") +
+  tm_layout(legend.frame = TRUE)
+tmap_arrange(tmr1, tmr2)
+```
+
+---
+# Local operations - operation on many layers
+
+`?lapp`
+
+```{r}
+landsat_path = system.file("raster/landsat.tif", package = "spDataLarge")
+landsat = rast(landsat_path)
+landsat
+```
+
+---
+# Local operations - operation on many layers
+
+.pull-left[
+https://bleutner.github.io/RStoolbox/rstbx-docu/spectralIndices.html
+
+$$
+\begin{split}
+NDVI&= \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}\\
+\end{split}
+$$
+
+```{r}
+ndvi_fun = function(nir, red){
+  (nir - red) / (nir + red)
+}
+ndvi = lapp(landsat[[c(4, 3)]],
+            fun = ndvi_fun)
+```
+]
+
+.pull-right[
+```{r, purl=FALSE,echo=FALSE, message=FALSE, out.width="100%", fig.height=7}
+tm_shape(ndvi) +
+  tm_raster(style = "cont", title = "NDVI")
+```
+]
 
 ---
 # Focal operations
 
+`?focal`
+
+```{r}
+srtm_focal_mean = focal(srtm, 
+                   w = matrix(1, nrow = 3, ncol = 3), 
+                   fun = mean)
+```
+
+```{r, purl=FALSE,echo=FALSE}
+tmf1 = tm_shape(srtm) +
+  # tm_graticules() +
+  tm_raster(style = "cont") +
+  tm_layout(legend.frame = TRUE)
+tmf2 = tm_shape(srtm_focal_mean) +
+  # tm_graticules() +
+  tm_raster(style = "cont") +
+  tm_layout(legend.frame = TRUE)
+tmap_arrange(tmf1, tmf2)
+```
+
+---
+# Focal operations
+
+https://github.com/rspatial/terra/issues/243
+`?focal` - https://en.wikipedia.org/wiki/Sobel_operator
+
+```{r}
+srtm_focal_sobel = focal(srtm_r, 
+                   w = matrix(c(1, 2, 1, 0, 0, 0, -1, -2, -1) / 4, nrow = 3),
+                   expand = TRUE)
+```
+
+```{r, purl=FALSE,echo=FALSE, message=FALSE}
+tmf1 = tm_shape(srtm) +
+  # tm_graticules() +
+  tm_raster(style = "cont") +
+  tm_layout(legend.frame = TRUE)
+tmf2 = tm_shape(srtm_focal_sobel) +
+  # tm_graticules() +
+  tm_raster(style = "cont") +
+  tm_layout(legend.frame = TRUE)
+tmap_arrange(tmf1, tmf2)
+```
 
 ---
 # Zonal operations
 
+`?zonal`
+Also known as zonal statistics. Result - a summary table
+
+```{r}
+srtm_utm = project(srtm, nlcd, method = "bilinear")
+```
+
+```{r, purl=FALSE, warning=FALSE, echo=FALSE, message=FALSE}
+tm_shape(nlcd) +
+  tm_raster(drop.levels = TRUE, legend.show = FALSE)
+```
 
 ---
-# Global operations
+# Zonal operations
 
-- global + freq + areas (cellSize())
+```{r}
+srtm_zonal = zonal(srtm_utm, nlcd, na.rm = TRUE, fun = "mean")
+srtm_zonal
+```
+
+---
+# Global operations 
+
+```{r}
+global(srtm, fun = "mean")
+global(srtm, fun = "sd")
+```
+
+---
+# Global operations 
+
+```{r}
+freq(nlcd)
+```
+
+
+```{r, eval=FALSE, echo=FALSE}
+freq(nlcd)
+```
+
+<!-- - global + freq + areas (cellSize()) -->
 
 ---
 class: inverse, left, bottom
@@ -68,21 +370,444 @@ class: inverse, left, bottom
 class: inverse, left, bottom
 # Transformations
 
-- selecting layers
-- reprojecting + merging/mosaicing raster+ resampling
+---
+# Transformations
+
+## Resampling
+
+## Reprojecting rasters
+
+- Different than reprojecting vectors
+- Two separate spatial operations: 
+    - A vector reprojection of cell centroids to another CRS
+    - Computation of new pixel values through resampling
+
+## Merging/mosaicing rasters
+
+---
+# Resampling
+
+```{r}
+srtm
+```
+
+```{r}
+new_srtm = srtm
+res(new_srtm) = 0.001
+new_srtm
+```
+
+---
+# Resampling
+
+```{r}
+srtm2 = resample(srtm, new_srtm, method = "bilinear") # method!
+srtm2
+```
+
+---
+# Reprojecting rasters (1)
+
+```{r}
+crs(nlcd, describe = TRUE)
+```
+
+.pull-left[
+```{r}
+unique(nlcd)
+```
+]
+
+.pull-right[
+```{r, purl=FALSE,echo=FALSE, message=FALSE, warning=FALSE}
+tm_shape(nlcd) + 
+  tm_raster(drop.levels = TRUE, legend.show = FALSE)
+```
+]
+
+---
+# Reprojecting rasters (1)
+
+```{r}
+wgs84 = "EPSG:4326"
+nlcd_wgs84 = project(nlcd, wgs84, method = "near")
+```
+
+---
+# Reprojecting rasters (1)
+
+.pull-left[
+```{r, purl=FALSE,echo=FALSE, message=FALSE, warning=FALSE, fig.height=7}
+tm_shape(nlcd) + 
+  tm_grid() + 
+  tm_raster(drop.levels = TRUE, legend.show = FALSE)
+```
+]
+
+.pull-right[
+```{r, purl=FALSE,echo=FALSE, message=FALSE, warning=FALSE, fig.height=7}
+nlcd2 = stars::st_as_stars(nlcd)
+nlcd2 = droplevels(nlcd2)
+tm_shape(nlcd_wgs84) + 
+  tm_grid() + 
+  tm_raster(style = "cat", palette = attr(nlcd2[[1]], "colors")) + 
+  tm_layout(legend.show = FALSE)
+```
+]
+
+
+---
+# Reprojecting rasters (2)
+
+```{r}
+crs(srtm, describe = TRUE)
+```
+
+.pull-left[
+```{r}
+hist(srtm)
+```
+]
+
+.pull-right[
+```{r, purl=FALSE,echo=FALSE}
+tm_shape(srtm) + 
+  tm_grid() +
+  tm_raster(style = "cont",
+            legend.show = FALSE)
+```
+]
+
+
+---
+# Reprojecting rasters (2)
+
+https://projectionwizard.org/
+
+```{r}
+equalarea = 'PROJCS["ProjWiz_Custom_Albers",
+ GEOGCS["GCS_WGS_1984",
+  DATUM["D_WGS_1984",
+   SPHEROID["WGS_1984",6378137.0,298.257223563]],
+  PRIMEM["Greenwich",0.0],
+  UNIT["Degree",0.0174532925199433]],
+ PROJECTION["Albers"],
+ PARAMETER["False_Easting",0.0],
+ PARAMETER["False_Northing",0.0],
+ PARAMETER["Central_Meridian",-113.04],
+ PARAMETER["Standard_Parallel_1",32.32],
+ PARAMETER["Standard_Parallel_2",42.32],
+ PARAMETER["Latitude_Of_Origin",37.32],
+ UNIT["Meter",1.0]]'
+```
+
+```{r}
+srtm_ea = project(srtm, equalarea, method = "bilinear")
+crs(srtm_ea, describe = TRUE)
+```
+
+
+---
+# Reprojecting rasters (2)
+
+.pull-left[
+```{r, purl=FALSE,echo=FALSE, fig.height=7}
+tm_shape(srtm) + 
+  tm_grid() + 
+  tm_raster(style = "cont") + 
+  tm_layout(legend.show = FALSE)
+```
+]
+
+.pull-right[
+```{r, purl=FALSE,echo=FALSE, fig.height=7}
+tm_shape(srtm_ea) + 
+  tm_grid() + 
+  tm_raster(style = "cont") + 
+  tm_layout(legend.show = FALSE)
+```
+]
+
+---
+# Merging/mosaicing rasters
 
 ---
 class: inverse, left, bottom
 # Raster-vector interactions
 
-- raster cropping and masking
-- raster extraction - by points, lines, and polygons
-- rasterization - points, polygons
-- vectorization - polygons, contours
+---
+# Raster-vector interactions
+
+## Raster cropping and masking
+## Raster extraction - by points, lines, and polygons
+## Rasterization - points, lines, polygons to rasters
+## Vectorization - rasters to polygons or contours
+
+---
+# Raster cropping and masking
+
+```{r}
+library(sf)
+zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
+```
+
+---
+# Raster cropping
+
+```{r}
+srtm_utm_c = crop(srtm_utm, vect(zion))
+```
+
+```{r, echo=FALSE, purl=FALSE, message=FALSE, warning=FALSE, fig.width=12}
+tc1 = tm_shape(srtm_utm) +
+  tm_grid() + 
+  tm_raster(style = "cont") +
+  tm_shape(zion) +
+  tm_borders() +
+  tm_layout(inner.margins = 0)
+tc2 = tm_shape(srtm_utm_c) +
+  tm_grid() + 
+  tm_raster(style = "cont") +
+  tm_shape(zion) +
+  tm_borders() +
+  tm_layout(inner.margins = 0)
+tmap_arrange(tc1, tc2)
+```
+
+---
+# Raster masking
+
+Raster masking is usually done together with cropping.
+
+```{r}
+srtm_utm_m = mask(srtm_utm_c, vect(zion))
+```
+
+```{r, echo=FALSE, purl=FALSE, message=FALSE, warning=FALSE, fig.width=12}
+tc1 = tm_shape(srtm_utm) +
+  tm_grid() + 
+  tm_raster(style = "cont") +
+  tm_shape(zion) +
+  tm_borders() +
+  tm_layout(inner.margins = 0)
+tc2 = tm_shape(srtm_utm_c) +
+  tm_grid() + 
+  tm_raster(style = "cont") +
+  tm_shape(zion) +
+  tm_borders() +
+  tm_layout(inner.margins = 0)
+tc3 = tm_shape(srtm_utm_m) +
+  tm_grid() + 
+  tm_raster(style = "cont") +
+  tm_shape(zion) +
+  tm_borders() +
+  tm_layout(inner.margins = 0)
+tmap_arrange(tc1, tc2, tc3)
+```
+
+---
+# Raster extraction (by points)
+
+```{r 53-raster-extraction-5}
+zion_points = read_sf(system.file("vector/zion_points.gpkg", package = "spDataLarge"))
+```
+
+```{r 53-raster-extraction-6, purl=FALSE,echo=FALSE}
+tm_shape(srtm) +
+  tm_raster(style = "cont") +
+  tm_shape(zion_points) +
+  tm_dots(size = 2)
+```
+
+---
+# Raster extraction (by points)
+
+```{r 53-raster-extraction-7}
+zion_extract = terra::extract(srtm, vect(zion_points))
+zion_points = cbind(zion_points, zion_extract)
+zion_points
+```
+
+---
+# Raster extraction (by polygons)
+
+```{r 53-raster-extraction-12}
+zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
+zion = st_transform(zion, crs(srtm))
+zion_srtm_values = terra::extract(srtm, vect(zion))
+head(zion_srtm_values)
+```
+
+```{r 53-raster-extraction-13, purl=FALSE,echo=FALSE}
+tm_shape(srtm) +
+  tm_raster(style = "cont") +
+  tm_shape(zion) +
+  tm_polygons()
+```
+
+---
+# Raster extraction (by polygons)
+
+```{r 53-raster-extraction-14}
+zion_srtm_values = terra::extract(srtm, vect(zion))
+```
+
+```{r 53-raster-extraction-15, message=FALSE}
+library(dplyr)
+zion_srtm_values %>% 
+  group_by(ID) %>% 
+  summarize(across(srtm, list(min = min, mean = mean, max = max)))
+```
+
+---
+# Raster extraction (by polygons)
+
+https://geocompr.robinlovelace.net/geometric-operations.html#rasterization
+
+```{r 53-raster-extraction-16}
+zion_srtm_values2 = terra::extract(srtm, vect(zion), exact = TRUE)
+```
+
+```{r 53-raster-extraction-17}
+zion_srtm_values2 %>% 
+  group_by(ID) %>% 
+  summarize(across(srtm, list(min = min, mean = mean, max = max)))
+```
+
+---
+# Rasterization - points, lines, polygons to rasters
+
+Rasterization is a very flexible operation.
+
+The results depend on:
+- the nature of the template raster
+- the type of input vector (e.g., points, polygons)
+- a variety of arguments taken by the `rasterize()` function
+
+
+---
+# Rasterization
+
+```{r, message=FALSE, warning=FALSE}
+zion_points_utm = st_transform(zion_points, crs = crs(nlcd))
+zion_points_utm$vals = sample(1:10, size = nrow(zion_points_utm), replace = TRUE)
+raster_template = rast(ext(zion_points_utm), 
+                       resolution = 4000,
+                       crs = crs(zion_points_utm))
+```
+
+---
+# Rasterization (presence/absence)
+
+```{r, warning=FALSE}
+ch_raster1 = rasterize(vect(zion_points_utm), raster_template, field = 1)
+```
+
+```{r, purl=FALSE,echo=FALSE, warning=FALSE}
+library(tmap)
+tm_shape(ch_raster1) +
+  tm_raster(title = "") +
+  tm_shape(zion_points_utm) + 
+  tm_dots()
+```
+
+---
+# Rasterization (count)
+
+```{r, warning=FALSE}
+ch_raster2 = rasterize(vect(zion_points_utm), raster_template, fun = length)
+```
+
+```{r, purl=FALSE,echo=FALSE, warning=FALSE}
+tm_shape(ch_raster2) +
+  tm_raster(title = "Count") +
+  tm_shape(zion_points_utm) + 
+  tm_dots()
+```
+
+---
+# Rasterization (aggregated values)
+
+```{r}
+ch_raster3 = rasterize(vect(zion_points_utm), raster_template, field = "vals", 
+                       fun = sum, na.rm = TRUE)
+```
+
+```{r, purl=FALSE,echo=FALSE, warning=FALSE}
+tm_shape(ch_raster3) +
+  tm_raster(title = "Sum of vals") +
+  tm_shape(zion_points_utm) + 
+  tm_dots()
+```
+
+---
+# Vectorization - rasters to polygons or contours
+
+(Mostly) Used when we:
+
+- need to create borders or polygons based on a categorical raster data
+- want to create contour lines
+- are more familiar with operations on vector data
+
+---
+# Vectorization
+
+```{r, results='hide', warning=FALSE}
+nlcd_poly = as.polygons(nlcd_recl)
+nlcd_poly_sf = st_as_sf(nlcd_poly)
+```
+
+```{r, purl=FALSE,echo=FALSE, warning=FALSE, message=FALSE}
+tmap_options(main.title.size = 1)
+
+p1p = tm_shape(nlcd_recl) + tm_raster(legend.show = FALSE, style = "cat", palette = "Set2") +
+  tm_layout(main.title = "nlcd_recl", frame = FALSE, inner.margins = 0, outer.margins = 0)
+
+p2p = tm_shape(nlcd_poly_sf) + tm_borders(lwd = 0.1) +
+  tm_layout(main.title = "nlcd_poly_sf", frame = FALSE, inner.margins = 0, outer.margins = 0)
+
+tmap_arrange(p1p, p2p, ncol = 2)
+```
+
+---
+# Vectorization
+
+```{r, warning=FALSE}
+srtm_con = as.contour(srtm_utm)
+srtm_con_sf = st_as_sf(srtm_con)
+```
+
+```{r, echo=FALSE, purl=FALSE, warning=FALSE, message=FALSE}
+tm_shape(srtm_utm) + tm_raster(palette = "Spectral", style = "cont", alpha = 0.5) +
+  tm_shape(srtm_con_sf) + tm_iso()
+```
+
+---
+class: inverse, left, bottom
+# Conversions
+
+---
+# Conversions
+
+https://github.com/geocompr/geocompr.github.io/blob/source/content/post/2021/spatial-classes.Rmd
 
 ---
 class: inverse, left, bottom
 # Output
+
+---
+# Output
+
+- https://geocompr.robinlovelace.net/read-write.html#data-output
+- https://gdal.org/drivers/raster/gtiff.html
+
+```{r, eval=FALSE}
+writeRaster(nlcd, filename = "nlcd1.tif", gdal = c("COMPRESS=NONE"))
+writeRaster(nlcd, filename = "nlcd2.tif", datatype = "INT1U")
+writeRaster(nlcd, filename = "nlcd3.tif", gdal = c("COMPRESS=DEFLATE"))
+writeRaster(nlcd, filename = "nlcd4.tif", datatype = "INT1U", 
+            gdal = c("COMPRESS=DEFLATE"))
+```
 
 ---
 class: inverse, left, bottom
@@ -95,10 +820,146 @@ class: inverse, left, bottom
 class: inverse, left, bottom
 # Raster analysis
 
-- autocor - Compute global or local spatial autocorrelation
-- localFun - Local association (using neighborhoods) functions
-- predict
-- interpolate
+---
+# Global or local spatial autocorrelation
+
+
+https://github.com/rspatial/terra/issues/245
+
+.pull-left[
+`?autocor()`
+
+```{r}
+# global 
+autocor(srtm_utm)
+```
+]
+
+.pull-right[
+```{r}
+# rook's case neighbors
+f = matrix(c(0,1,0,1,0,1,0,1,0), nrow = 3)
+# local 
+srtm_utm_cor = autocor(srtm_utm, w = f, global = FALSE)
+srtm_utm_cor
+```
+]
+
+---
+# Local association functions
+
+`?localFun`, `?corLocal`
+
+---
+# Predictions
+
+```{r}
+landsat_path = system.file("raster/landsat.tif", package = "spDataLarge")
+landsat = rast(landsat_path)
+landsat_s = stretch(landsat, maxq = 0.98)
+plotRGB(landsat_s, r = 3, g = 2, b = 1)
+plot(st_geometry(zion_points_utm), add = TRUE, col = "red", cex = 3)
+```
+
+---
+# Predictions
+
+`?predict` - `glm`, `randomForest`, `prcomp`
+
+```{r}
+zion_points_utm_v = extract(landsat_s, vect(zion_points_utm))
+pca = prcomp(zion_points_utm_v[-1])
+pca
+```
+
+---
+# Predictions
+
+`?predict` - `glm`, `randomForest`, `prcomp`
+
+```{r}
+pca_pred = predict(landsat_s, pca)
+plot(pca_pred)
+```
+
+---
+# Interpolations
+
+`?interpolate`
+
+```{r}
+zion_points_srtm = extract(srtm_utm, vect(zion_points_utm))
+```
+
+```{r, message=FALSE}
+library(fields)
+tps = Tps(st_coordinates(zion_points_utm), zion_points_utm$srtm)
+rt = rast(srtm_utm)
+interp1 = interpolate(rt, tps)
+plot(interp1)
+```
+
+---
+# Interpolations
+
+```{r}
+library(gstat)
+interpolate_gstat = function(model, x, crs, ...) {
+	v = st_as_sf(x, coords = c("x", "y"), crs = crs)
+	p = predict(model, v, ...)
+	as.data.frame(p)[, 1:2]
+}
+```
+
+```{r, warning=FALSE}
+v = variogram(srtm ~ 1, data = zion_points_utm)
+# plot(v)
+mv = fit.variogram(v, vgm(120000, "Exp", 12000, nugget = 10000))
+plot(v, model = mv)
+```
+
+---
+# Interpolations
+
+```{r, cache = TRUE, warning=FALSE}
+g_OK = gstat(NULL, "srtm", srtm ~ 1, zion_points_utm, model = mv)
+OK = interpolate(rt, g_OK, debug.level = 0, fun = interpolate_gstat,
+                 crs = crs(rt), index = 1)
+plot(OK)
+```
+
+---
+# Segmentations
+
+https://github.com/Nowosad/supercells
+
+```{r}
+library(supercells)
+ortho = rast(system.file("raster/ortho.tif", package = "supercells"))
+plot(ortho)
+```
+
+---
+# Segmentations
+
+```{r, message=FALSE, results='hide'}
+ortho_slic1 = supercells(ortho, k = 200, compactness = 10)
+plot(ortho)
+plot(st_geometry(ortho_slic1), add = TRUE)
+```
+
+---
+# Segmentations
+
+```{r}
+rgb_to_hex = function(x){
+  apply(t(x), 2, function(x) rgb(x[1], x[2], x[3], maxColorValue = 255))
+}
+avg_colors = rgb_to_hex(st_drop_geometry(ortho_slic1[4:6]))
+
+plot(ortho)
+plot(st_geometry(ortho_slic1), add = TRUE, col = avg_colors)
+```
 
 ---
 class: inverse, left, bottom
@@ -110,3 +971,5 @@ class: inverse, left, bottom
 ---
 class: inverse, left, bottom
 # Summary
+
+<!-- ??? -->
