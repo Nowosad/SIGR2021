@@ -1,0 +1,21 @@
+---
+# Exercises 1
+
+1) Find the file path of the `nz_elev.tif` data using the following code: `system.file("raster/nz_elev.tif", package = "spDataLarge")`. 
+Read this file into R.
+What is the resolution of the data?
+
+2) Create and customize a mpa based on the `nz_elev.tif` dataset. 
+Save the result to a `.png` file.
+
+3) Replace values below 0 to 1 (depressions), values between 0 and 300 to 2 (plains), values between 300 and 600 to 3 (hills), and values between 600 and the maximum value to 4 (mountains) in the `nz_elev` object.
+Create a new object `nz_elev_class`.
+
+4) Look at the `focal` function documentation. 
+Apply the Laplacian and the Sobel filters on `nz_elev`.
+Compare the results visually.
+
+5) Calculate an average elevation value in `nz_elev` for each category in `nz_elev_class`.
+
+6) Write a function to calculate the soil-adjusted vegetation index (SAVI; https://en.wikipedia.org/wiki/Soil-adjusted_vegetation_index ).
+Calculate SAVI for the Landsat 8 images for the area of Zion National Park. 
