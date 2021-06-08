@@ -1,3 +1,6 @@
+---
+# Exercises 3
+
 <!-- 1. Global or local spatial autocorrelation -->
 <!-- 2. ?Local association functions -->
 <!-- 3. ?predict - glm + randomForest -->
