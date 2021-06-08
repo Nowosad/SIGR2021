@@ -1,9 +1,32 @@
+---
+# Exercises 2
+
 <!-- 1. resampling -->
-<!-- 2. reproject -->
-<!-- 3. moisaic? -->
-<!-- 4. cropping and masking -->
-<!-- 5. raster extraction x2? -->
-<!-- 6. rasterization -->
-<!-- 7. vectorization -->
-<!-- 8. conversion -->
-<!-- 9. saving -->
+1) The `nz_elev` raster (`system.file("raster/nz_elev.tif", package = "spDataLarge")`) has the resolution of 1000 by 1000 meters.
+Resample the raster to the resolution of 2500 by 2500 meters.
+
+2) Change the projection of the `nz_elev` raster to WGS84 (EPSG: 4326).
+
+3) Run the following code to get the `nz` object: `data(nz, package = "spData")`. 
+Select the Otago region only.
+Create a map of `nz_elev` with the Otago region's borders on top.
+
+4) Crop and mask the `nz_elev` to the area of the Otago region only.
+Visualize the results.
+
+5) Read the `nz_height` object into R (`data(nz_height, package = "spData")`).
+Extract the elevation values from the `nz_elev` raster to the `nz_height` points, and combine the two objects.
+Compare the existing elevation column with the newly extracted values. 
+Are they the same?
+
+6) Extract elevation values for each region in New Zealand (the `nz` object). 
+Which region has the highest average elevation?
+
+7) Convert the `nz` object into a raster with a resolution of 5000 by 5000 meters.
+
+8) Create contour lines based on `nz_elev` with five different levels of values (see the `?graphics::contour` documentation).
+
+9) Convert the `nz_elev` object into the **stars** object. 
+Where can you find the resolution and projection of the data?
+
+10) Save the `nz_elev` object as a new GeoTIFF file named `nz_elev_fr.tif`.
