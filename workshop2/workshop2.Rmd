@@ -213,6 +213,13 @@ nlcd = rast(system.file("raster/nlcd2011.tif", package = "spDataLarge"))
 rcl2 = matrix(c(11, 11, 1, 21, 24, 2, 31, 31, 3, 41, 43, 4, 51, 52, 5, 
                 71, 74, 7, 81, 82, 8, 90, 95, 9),
              ncol = 3, byrow = TRUE)
+rcl2
+```
+
+---
+# Local operations - reclassification
+
+```{r}
 nlcd_recl = classify(nlcd, rcl = rcl2, right = NA)
 ```
 
@@ -382,7 +389,7 @@ class: inverse, left, bottom
     - A vector reprojection of cell centroids to another CRS
     - Computation of new pixel values through resampling
 
-## Merging/mosaicing rasters
+<!-- Merging/mosaicing rasters -->
 
 ---
 # Resampling
@@ -528,8 +535,7 @@ tm_shape(srtm_ea) +
 ```
 ]
 
----
-# Merging/mosaicing rasters
+<!-- Merging/mosaicing rasters -->
 
 ---
 class: inverse, left, bottom
@@ -635,15 +641,21 @@ zion_points
 zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
 zion = st_transform(zion, crs(srtm))
 zion_srtm_values = terra::extract(srtm, vect(zion))
-head(zion_srtm_values)
 ```
 
+.pull-left[
+```{r}
+head(zion_srtm_values)
+```
+]
+.pull-right[
 ```{r 53-raster-extraction-13, purl=FALSE,echo=FALSE}
 tm_shape(srtm) +
   tm_raster(style = "cont") +
   tm_shape(zion) +
   tm_polygons()
 ```
+]
 
 ---
 # Raster extraction (by polygons)
@@ -823,32 +835,44 @@ class: inverse, left, bottom
 ---
 # Global or local spatial autocorrelation
 
-
-https://github.com/rspatial/terra/issues/245
-
-.pull-left[
 `?autocor()`
 
 ```{r}
 # global 
 autocor(srtm_utm)
 ```
-]
 
-.pull-right[
+---
+# Local spatial autocorrelation
+
+https://github.com/rspatial/terra/issues/245
+
+.pull-left[
 ```{r}
 # rook's case neighbors
 f = matrix(c(0,1,0,1,0,1,0,1,0), nrow = 3)
 # local 
-srtm_utm_cor = autocor(srtm_utm, w = f, global = FALSE)
+srtm_utm_cor = autocor(srtm_utm, w = f,
+                       global = FALSE)
 srtm_utm_cor
 ```
 ]
 
----
-# Local association functions
+--
 
-`?localFun`, `?corLocal`
+.pull-right[
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+tmlac1 = tm_shape(srtm_utm) +
+  tm_raster(style = "cont", title = "Elevation (m als)")
+tmlac2 = tm_shape(srtm_utm_cor) +
+  tm_raster(style = "cont", title = "Local autocorrelation")
+tmap_arrange(tmlac1, tmlac2)
+```
+]
+
+<!-- Local association functions -->
+
+<!-- `?localFun`, `?corLocal` -->
 
 ---
 # Predictions
@@ -887,21 +911,33 @@ plot(pca_pred)
 
 `?interpolate`
 
+.pull-left[
 ```{r}
-zion_points_srtm = extract(srtm_utm, vect(zion_points_utm))
+zion_points_srtm = extract(srtm_utm, 
+                      vect(zion_points_utm))
 ```
 
 ```{r, message=FALSE}
 library(fields)
-tps = Tps(st_coordinates(zion_points_utm), zion_points_utm$srtm)
+tps = Tps(st_coordinates(zion_points_utm),
+          zion_points_utm$srtm)
 rt = rast(srtm_utm)
 interp1 = interpolate(rt, tps)
+```
+]
+
+--
+
+.pull-right[
+```{r}
 plot(interp1)
 ```
+]
 
 ---
 # Interpolations
 
+.lc2[
 ```{r}
 library(gstat)
 interpolate_gstat = function(model, x, crs, ...) {
@@ -915,8 +951,14 @@ interpolate_gstat = function(model, x, crs, ...) {
 v = variogram(srtm ~ 1, data = zion_points_utm)
 # plot(v)
 mv = fit.variogram(v, vgm(120000, "Exp", 12000, nugget = 10000))
+```
+]
+
+.rc2[
+```{r}
 plot(v, model = mv)
 ```
+]
 
 ---
 # Interpolations
