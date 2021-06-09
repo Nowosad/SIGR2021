@@ -1,0 +1,100 @@
+---
+# Exercises 2
+
+1) The `nz_elev` raster (system.file("raster/nz_elev.tif", package = "spDataLarge")) has the resolution of 1000 by 1000 meters.
+Resample the raster to the resolution of 2500 by 2500 meters, and then change the output's projection to WGS84 (EPSG: 4326).
+
+```{r}
+library(terra)
+nz_elev = system.file("raster/nz_elev.tif", package = "spDataLarge")
+nz_elev = rast(nz_elev)
+raster_template = rast(ext(nz_elev), resolution = 2500, crs = crs(nz_elev))
+nz_elev2 = resample(nz_elev, raster_template, method = "bilinear")
+nz_elev2 = project(nz_elev2, "EPSG:4326")
+```
+
+2) Run the following code to get the `nz` object: `data(nz, package = "spData")`. 
+Select the Otago region only.
+Create a map of `nz_elev` with the Otago region's borders on top.
+Next, crop and mask the `nz_elev` to the area of the Otago region only.
+Visualize the results.
+
+```{r}
+library(sf)
+library(tmap)
+data(nz, package = "spData")
+otago = subset(nz, Name == "Otago")
+
+tm_shape(nz_elev) +
+  tm_raster(style = "cont") +
+  tm_shape(otago) +
+  tm_borders(col = "black")
+
+otagoc = crop(nz_elev, vect(otago))
+otagom = mask(otagoc, vect(otago))
+
+tm_shape(otagom) +
+  tm_raster(style = "cont") +
+  tm_shape(otago) +
+  tm_borders(col = "black")
+```
+
+3) Read the `nz_height` object into R (`data(nz_height, package = "spData")`).
+Extract the elevation values from the `nz_elev` raster to the `nz_height` points, and combine the two objects.
+Compare the existing elevation column with the newly extracted values. 
+Are they the same?
+
+```{r}
+data(nz_height, package = "spData")
+nz_elev_h = extract(nz_elev, vect(nz_height))
+nz_elev_h = cbind(nz_height, nz_elev_h)
+plot(nz_elev_h$elevation, nz_elev_h$elevation.1)
+cor(nz_elev_h$elevation, nz_elev_h$elevation.1)
+```
+
+4) Extract elevation values for each region in New Zealand (the `nz` object). 
+Which region has the highest average elevation?
+
+```{r}
+library(dplyr)
+nz_e = extract(nz_elev, vect(nz))
+av_e = nz_e %>%
+  group_by(ID) %>% 
+  summarise(mean_e = mean(elevation, na.rm = TRUE))
+nz2 = cbind(nz, av_e)
+arrange(nz2, -mean_e)
+```
+
+5) Convert the `nz` object into a raster with a resolution of 5000 by 5000 meters.
+
+```{r}
+raster_template2 = rast(ext(nz), resolution = 5000, crs = crs(nz))
+nz_ras = rasterize(vect(nz), raster_template2, field = "Name")
+plot(nz_ras)
+```
+
+6) Create contour lines based on `nz_elev` with five different levels of values (see the `?graphics::contour` documentation).
+
+```{r}
+nz_elev_con = as.contour(nz_elev, nlevels = 5)
+nz_elev_con_sf = st_as_sf(nz_elev_con)
+tm_shape(nz) +
+  tm_borders(lwd = 2) +
+  tm_shape(nz_elev_con_sf) +
+  tm_iso()
+```
+
+7) Convert the `nz_elev` object into the **stars** object. 
+Where can you find the resolution and projection of the data?
+
+```{r}
+library(stars)
+nz_elev_s = st_as_stars(nz_elev)
+```
+
+8) Save the `nz_elev` object as a new GeoTIFF file named `nz_elev_fr.tif`.
+
+```{r}
+writeRaster(nz_elev, "nz_elev_fr.tif")
+```
+
