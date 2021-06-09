@@ -1,7 +1,11 @@
 ---
 # Exercises 3
 
-<!-- 1. Global or local spatial autocorrelation -->
-<!-- 2. ?Local association functions -->
-<!-- 3. ?predict - glm + randomForest -->
-<!-- 4. ?interpolate - inverse distance weighted (IDW) -->
+1. Calculate different global and local indicators of autocorrelation for the `nz_elev` data (`system.file("raster/nz_elev.tif", package = "spDataLarge")`).
+Interpret the results and visualize the results of local indicators.
+2. Extract the values from the `landsat` dataset (`system.file("raster/landsat.tif", package = "spDataLarge")`) for the `zion_points` object's locations (`zion_points = read_sf(system.file("vector/zion_points.gpkg", package = "spDataLarge"))`).
+Try to use the `predict()` function (see the `?terra::predict` help file) with some method (e.g., glm, gam, randomForest) to predict values of the fourth band (near-infrared - `lan_4`) based on the values of the first three bands (blue, green, and red - `lan_1`, `lan_2`, `lan_3`). 
+Compare the results with the true values.
+3. Read the `nz_height` object into R (`data(nz_height, package = "spData")`).
+Extract the elevation values from the `nz_elev` raster to the `nz_height` points, and combine the two objects.
+Interpolate the elevation values based on the `nz_height` points' values using any method you want and compare the results with `nz_elev`.

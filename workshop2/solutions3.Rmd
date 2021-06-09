@@ -1,0 +1,78 @@
+---
+# Exercises 3
+
+1. Calculate different global and local indicators of autocorrelation for the `nz_elev` data (`system.file("raster/nz_elev.tif", package = "spDataLarge")`).
+Interpret the results and visualize the results of local indicators.
+
+```{r}
+library(terra)
+library(tmap)
+nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
+
+# global 
+autocor(nz_elev)
+autocor(nz_elev, method = "geary")
+
+# local
+ac1 = autocor(nz_elev, w = matrix(c(1,1,1,1,0,1,1,1,1),3), method = "moran", global = FALSE)
+ac2 = autocor(nz_elev, w = matrix(c(1,1,1,1,0,1,1,1,1),3), method = "geary", global = FALSE)
+
+# maps
+m1 = tm_shape(nz_elev) + tm_raster(style = "cont")
+m2 = tm_shape(ac1) + tm_raster(style = "cont")
+m3 = tm_shape(ac2) + tm_raster(style = "cont")
+tmap_arrange(m1, m2, m3)
+```
+
+2. Extract the values from the `landsat` dataset (`system.file("raster/landsat.tif", package = "spDataLarge")`) for the `zion_points` object's locations (`zion_points = read_sf(system.file("vector/zion_points.gpkg", package = "spDataLarge"))`).
+Try to use the `predict()` function (see the `?terra::predict` help file) with some method (e.g., glm, gam, randomForest) to predict values of the fourth band (near-infrared - `lan_4`) based on the values of the first three bands (blue, green, and red - `lan_1`, `lan_2`, `lan_3`). 
+Compare the results with the true values.
+
+```{r}
+zion_points = read_sf(system.file("vector/zion_points.gpkg", package = "spDataLarge"))
+landsat_path = system.file("raster/landsat.tif", package = "spDataLarge")
+landsat = rast(landsat_path)
+
+zion_points_utm = st_transform(zion_points, crs(landsat))
+zion_points_l = extract(landsat, vect(zion_points_utm))
+zion_points_l = cbind(zion_points_utm, zion_points_l)
+
+model =  glm(formula = lan_4~lan_1 + lan_2 + lan_3, data = zion_points_l)
+summary(model)
+
+landsat4 = terra::subset(landsat, 4)
+r1 = predict(landsat, model)
+r1_diff = landsat4 - r1
+
+plot(landsat4)
+plot(r1)
+plot(r1_diff)
+```
+
+3. Read the `nz_height` object into R (`data(nz_height, package = "spData")`).
+Extract the elevation values from the `nz_elev` raster to the `nz_height` points, and combine the two objects.
+Interpolate the elevation values based on the `nz_height` points' values using any method you want and compare the results with `nz_elev`.
+
+```{r}
+# remotes::install_github("r-spatial/gstat")
+library(gstat)
+data(nz_height, package = "spData")
+data(nz, package = "spData")
+nz_elev_h = extract(nz_elev, vect(nz_height))
+nz_elev_h = cbind(nz_height, nz_elev_h)
+rte = rast(nz_elev)
+crs(rte) = crs(nz_elev_h)
+interpolate_gstat = function(model, x, crs, ...) {
+	v = st_as_sf(x, coords = c("x", "y"), crs = crs)
+	p = predict(model, v, ...)
+	as.data.frame(p)[, 1:2]
+}
+g_idw = gstat(NULL, "elevation.1", elevation.1 ~ 1, nz_elev_h, set = list(idp = 1.2))
+idw_result = interpolate(rte, g_idw, debug.level = 0, fun = interpolate_gstat,
+                         crs = crs(rte), index = 1)
+idw_result = mask(idw_result, vect(nz))
+plot(idw_result)
+
+diff_raster = idw_result - nz_elev
+plot(diff_raster)
+```
