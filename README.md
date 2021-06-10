@@ -16,4 +16,4 @@ A workshop on GIS and mapping with R
 
 ### Friday 2 morning - Image processing and all things raster - 3H
 
-A workshop on image processing and raster analysis with R (raster, terra, stars)
+[A workshop on image processing and raster analysis with R (raster, terra, stars)](workshop2/workshop2.html)
