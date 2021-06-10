@@ -170,6 +170,25 @@ tmap_arrange(tm1, tm2, tm3, tm4, nrow = 1)
 ---
 # Local operations - replacing values
 
+```{r}
+srtm_new = srtm
+srtm_new[srtm_new < 1500] = NA
+```
+
+--
+
+```{r, purl=FALSE,echo=FALSE, message=FALSE, out.width="100%", fig.height=3.8, fig.width=12}
+library(tmap)
+tm1 = tm_shape(srtm) +
+  # tm_graticules() +
+  tm_raster(style = "cont")
+tm2 = tm_shape(srtm_new) +
+  # tm_graticules() +
+  tm_raster(style = "cont")
+tmap_arrange(tm1, tm2, nrow = 1)
+```
+
+
 
 ---
 # Local operations - reclassification
@@ -1014,4 +1033,38 @@ class: inverse, left, bottom
 class: inverse, left, bottom
 # Summary
 
-<!-- ??? -->
+---
+# Summary
+
+.pull-left[
+**Many resources are available: **
+
+- **terra** - https://rspatial.github.io/terra/reference/terra-package.html and https://rspatial.org/terra/index.html
+- **raster** - https://rspatial.org/raster/ and https://rpubs.com/etiennebr/visualraster
+- **stars** - https://r-spatial.github.io/stars/index.html and https://r-spatial.org/book/
+- https://geocompr.github.io/
+- https://spacetimewithr.org/Spatio-Temporal%20Statistics%20with%20R.pdf
+- More...
+
+**Sometimes conversion between classes is crucial!**
+]
+
+--
+
+.pull-right[
+**Ask for help, if needed:**
+
+- https://stackoverflow.com/questions/tagged/r
+- https://gis.stackexchange.com/questions/tagged/r
+- https://community.rstudio.com/
+- https://stat.ethz.ch/mailman/listinfo/r-sig-geo
+
+**Contribute something:**
+
+- https://github.com/
+- Provide suggestions 
+- Write bugs reports
+- Make improvements to the documentation, e.g., clarifying unclear sentences, fixing typos
+- Make changes to the code, e.g., to do things in a more efficient way
+- Share your work with #rspatial on Twitter
+]
