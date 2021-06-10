@@ -1,0 +1,15 @@
+base
+terra
+sp
+raster
+abind
+sf
+stars
+tmap
+dplyr
+dotCall64
+spam
+viridisLite
+viridis
+fields
+gstat

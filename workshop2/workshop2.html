@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Image processing and all things raster</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Jakub Nowosad &amp; Robin Lovelace" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, bottom, inverse, title-slide
+
+# Image processing and all things raster
+## A workshop on image processing and raster analysis with R
+### Jakub Nowosad &amp; Robin Lovelace
+
+---
+
+
+
+
+# Input
+
+
+```r
+srtm_path = system.file("raster/srtm.tif", package = "spDataLarge")
+srtm_path
+```
+
+```
+## [1] "/home/jn/R/x86_64-redhat-linux-gnu-library/4.0/spDataLarge/raster/srtm.tif"
+```
+
+---
+# Input - terra
+
+**terra** - https://rspatial.github.io/terra/reference/terra-package.html
+
+
+```r
+library(terra)
+srtm = rast(srtm_path)
+srtm
+```
+
+```
+## class       : SpatRaster 
+## dimensions  : 457, 465, 1  (nrow, ncol, nlyr)
+## resolution  : 0.0008333333, 0.0008333333  (x, y)
+## extent      : -113.2396, -112.8521, 37.13208, 37.51292  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+## source      : srtm.tif 
+## name        : srtm 
+## min value   : 1024 
+## max value   : 2892
+```
+
+---
+# Input - raster
+
+**raster** - https://rspatial.org/raster/ and https://rpubs.com/etiennebr/visualraster
+
+
+```r
+library(raster)
+srtm_r = raster(srtm_path)
+srtm_r
+```
+
+```
+## class      : RasterLayer 
+## dimensions : 457, 465, 212505  (nrow, ncol, ncell)
+## resolution : 0.0008333333, 0.0008333333  (x, y)
+## extent     : -113.2396, -112.8521, 37.13208, 37.51292  (xmin, xmax, ymin, ymax)
+## crs        : +proj=longlat +datum=WGS84 +no_defs 
+## source     : srtm.tif 
+## names      : srtm 
+## values     : 1024, 2892  (min, max)
+```
+
+---
+# Input - stars
+
+**stars** - https://r-spatial.github.io/stars/index.html and https://r-spatial.org/book/
+
+
+```r
+library(stars)
+srtm_s = read_stars(srtm_path)
+srtm_s
+```
+
+```
+## stars object with 2 dimensions and 1 attribute
+## attribute(s):
+##    srtm.tif    
+##  Min.   :1024  
+##  1st Qu.:1535  
+##  Median :1837  
+##  Mean   :1843  
+##  3rd Qu.:2114  
+##  Max.   :2892  
+## dimension(s):
+##   from  to  offset        delta refsys point values x/y
+## x    1 465 -113.24  0.000833333 WGS 84 FALSE   NULL [x]
+## y    1 457 37.5129 -0.000833333 WGS 84 FALSE   NULL [y]
+```
+
+---
+class: inverse, left, bottom
+# Maps
+
+---
+# Maps
+
+
+```r
+plot(srtm)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Maps
+
+
+```r
+library(tmap)
+tm_shape(srtm) +
+  tm_raster()
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Maps
+
+.pull-left[
+
+```r
+tm_shape(srtm) +
+  tm_graticules() +
+  tm_raster(style = "cont", 
+            title = "elevation (m a.s.l)",
+            palette = "-Spectral") +
+  tm_scale_bar(breaks = c(0, 2, 4),
+               text.size = 1) +
+  tm_credits("Jakub Nowosad, 2021") +
+  tm_layout(inner.margins = 0,
+    main.title = "Zion National Park")
+```
+]
+.pull-right[
+&lt;img src="workshop2_files/figure-html/srtmmap-1.png" width="672" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: inverse, left, bottom
+# Map algebra
+
+---
+# Map algebra
+
+Used for a various task related to spatial raster data.
+
+It can be divided into four groups:
+
+1. **Local** - per-cell operations
+2. **Focal (neighborhood operations)** - most often the output cell value is the result of a 3 x 3 input cell block
+3. **Zonal operations** - to summarize raster values for some zones (usually irregular areas)
+4. **Global** - to summarize raster values for one or several rasters
+
+---
+# Local operations
+
+- Raster calculator
+- Replacing values
+- Reclassification
+- Operations on many layers (e.g., calculating spectral indices, such as NDVI)
+
+
+---
+# Local operations - raster calculator
+
+
+
+```r
+srtm2 = srtm + 1000
+```
+
+
+```r
+srtm3 = srtm - global(srtm, min)[[1]]
+```
+
+
+```r
+srtm4 = srtm - global(srtm, median)[[1]]
+```
+
+--
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-11-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Local operations - replacing values
+
+
+```r
+srtm_new = srtm
+srtm_new[srtm_new &lt; 1500] = NA
+```
+
+--
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Local operations - reclassification
+
+
+```r
+rcl = matrix(c(0, 1500, 1, 1500, 2000, 2, 2000, 9999, 3),
+             ncol = 3, byrow = TRUE)
+rcl
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    0 1500    1
+## [2,] 1500 2000    2
+## [3,] 2000 9999    3
+```
+
+---
+# Local operations - reclassification
+
+
+```r
+srtm_recl = classify(srtm, rcl = rcl)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Local operations - reclassification
+
+https://www.mrlc.gov/data/legends/national-land-cover-database-2011-nlcd2011-legend
+
+
+```r
+nlcd = rast(system.file("raster/nlcd2011.tif", package = "spDataLarge"))
+```
+
+
+```r
+rcl2 = matrix(c(11, 11, 1, 21, 24, 2, 31, 31, 3, 41, 43, 4, 51, 52, 5, 
+                71, 74, 7, 81, 82, 8, 90, 95, 9),
+             ncol = 3, byrow = TRUE)
+rcl2
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]   11   11    1
+## [2,]   21   24    2
+## [3,]   31   31    3
+## [4,]   41   43    4
+## [5,]   51   52    5
+## [6,]   71   74    7
+## [7,]   81   82    8
+## [8,]   90   95    9
+```
+
+---
+# Local operations - reclassification
+
+
+```r
+nlcd_recl = classify(nlcd, rcl = rcl2, right = NA)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Local operations - operation on many layers
+
+`?lapp`
+
+
+```r
+landsat_path = system.file("raster/landsat.tif", package = "spDataLarge")
+landsat = rast(landsat_path)
+landsat
+```
+
+```
+## class       : SpatRaster 
+## dimensions  : 1428, 1128, 4  (nrow, ncol, nlyr)
+## resolution  : 30, 30  (x, y)
+## extent      : 301905, 335745, 4111245, 4154085  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=utm +zone=12 +datum=WGS84 +units=m +no_defs 
+## source      : landsat.tif 
+## names       : lan_1, lan_2, lan_3, lan_4 
+## min values  :  7550,  6404,  5678,  5252 
+## max values  : 19071, 22051, 25780, 31961
+```
+
+---
+# Local operations - operation on many layers
+
+.pull-left[
+https://bleutner.github.io/RStoolbox/rstbx-docu/spectralIndices.html
+
+$$
+`\begin{split}
+NDVI&amp;= \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}\\
+\end{split}`
+$$
+
+
+```r
+ndvi_fun = function(nir, red){
+  (nir - red) / (nir + red)
+}
+ndvi = lapp(landsat[[c(4, 3)]],
+            fun = ndvi_fun)
+```
+]
+
+.pull-right[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Focal operations
+
+`?focal`
+
+
+```r
+srtm_focal_mean = focal(srtm, 
+                   w = matrix(1, nrow = 3, ncol = 3), 
+                   fun = mean)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Focal operations
+
+https://github.com/rspatial/terra/issues/243
+`?focal` - https://en.wikipedia.org/wiki/Sobel_operator
+
+
+```r
+srtm_focal_sobel = focal(srtm_r, 
+                   w = matrix(c(1, 2, 1, 0, 0, 0, -1, -2, -1) / 4, nrow = 3),
+                   expand = TRUE)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Zonal operations
+
+`?zonal`
+Also known as zonal statistics. Result - a summary table
+
+
+```r
+srtm_utm = project(srtm, nlcd, method = "bilinear")
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Zonal operations
+
+
+```r
+srtm_zonal = zonal(srtm_utm, nlcd, na.rm = TRUE, fun = "mean")
+srtm_zonal
+```
+
+```
+##    nlcd2011     srtm
+## 1        11 2227.060
+## 2        21 1713.980
+## 3        22 1642.077
+## 4        23 1569.632
+## 5        31 1854.069
+## 6        41 2361.121
+## 7        42 1867.068
+## 8        43 2500.253
+## 9        52 1650.966
+## 10       71 1644.359
+## 11       81 1284.106
+## 12       82 1417.671
+## 13       90 1254.168
+## 14       95 1909.590
+```
+
+---
+# Global operations 
+
+
+```r
+global(srtm, fun = "mean")
+```
+
+```
+##          mean
+## srtm 1842.548
+```
+
+```r
+global(srtm, fun = "sd")
+```
+
+```
+##            sd
+## srtm 416.6608
+```
+
+---
+# Global operations 
+
+
+```r
+freq(nlcd)
+```
+
+```
+##       layer value  count
+##  [1,]     1    11   1209
+##  [2,]     1    21  14149
+##  [3,]     1    22   3173
+##  [4,]     1    23    195
+##  [5,]     1    31 106070
+##  [6,]     1    41 196044
+##  [7,]     1    42 564668
+##  [8,]     1    43   6825
+##  [9,]     1    52 545771
+## [10,]     1    71   4878
+## [11,]     1    81   8460
+## [12,]     1    82    268
+## [13,]     1    90   6422
+## [14,]     1    95     75
+```
+
+
+
+
+&lt;!-- - global + freq + areas (cellSize()) --&gt;
+
+---
+class: inverse, left, bottom
+# Exercises 1
+
+
+---
+# Exercises 1
+
+1. Find the file path of the `nz_elev.tif` data using the following code: `system.file("raster/nz_elev.tif", package = "spDataLarge")`. 
+Read this file into R.
+What is the resolution of the data?
+2. Create and customize a mpa based on the `nz_elev.tif` dataset. 
+Save the result to a `.png` file.
+3. Replace values below 0 to 1 (depressions), values between 0 and 300 to 2 (plains), values between 300 and 600 to 3 (hills), and values between 600 and the maximum value to 4 (mountains) in the `nz_elev` object.
+Create a new object `nz_elev_class`.
+4. Look at the `focal` function documentation. 
+Apply the Laplacian and the Sobel filters on `nz_elev`.
+Compare the results visually.
+5. Calculate an average elevation value in `nz_elev` for each category in `nz_elev_class`.
+6. Write a function to calculate the soil-adjusted vegetation index (SAVI; https://en.wikipedia.org/wiki/Soil-adjusted_vegetation_index ).
+Calculate SAVI for the Landsat 8 images for the area of Zion National Park. 
+
+---
+class: inverse, left, bottom
+# Transformations
+
+---
+# Transformations
+
+## Resampling
+
+## Reprojecting rasters
+
+- Different than reprojecting vectors
+- Two separate spatial operations: 
+    - A vector reprojection of cell centroids to another CRS
+    - Computation of new pixel values through resampling
+
+&lt;!-- Merging/mosaicing rasters --&gt;
+
+---
+# Resampling
+
+
+```r
+srtm
+```
+
+```
+## class       : SpatRaster 
+## dimensions  : 457, 465, 1  (nrow, ncol, nlyr)
+## resolution  : 0.0008333333, 0.0008333333  (x, y)
+## extent      : -113.2396, -112.8521, 37.13208, 37.51292  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+## source      : srtm.tif 
+## name        : srtm 
+## min value   : 1024 
+## max value   : 2892
+```
+
+
+```r
+new_srtm = srtm
+res(new_srtm) = 0.001
+new_srtm
+```
+
+```
+## class       : SpatRaster 
+## dimensions  : 381, 388, 1  (nrow, ncol, nlyr)
+## resolution  : 0.001, 0.001  (x, y)
+## extent      : -113.2396, -112.8516, 37.13208, 37.51308  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +no_defs
+```
+
+---
+# Resampling
+
+
+```r
+srtm2 = resample(srtm, new_srtm, method = "bilinear") # method!
+srtm2
+```
+
+```
+## class       : SpatRaster 
+## dimensions  : 381, 388, 1  (nrow, ncol, nlyr)
+## resolution  : 0.001, 0.001  (x, y)
+## extent      : -113.2396, -112.8516, 37.13208, 37.51308  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+## source      : memory 
+## name        :     srtm 
+## min value   :  1041.55 
+## max value   : 2891.024
+```
+
+---
+# Reprojecting rasters (1)
+
+
+```r
+crs(nlcd, describe = TRUE)
+```
+
+```
+##                               name EPSG area         extent
+## 1 UTM Zone 12, Northern Hemisphere &lt;NA&gt; &lt;NA&gt; NA, NA, NA, NA
+```
+
+.pull-left[
+
+```r
+unique(nlcd)
+```
+
+```
+##       nlcd2011
+##  [1,]       11
+##  [2,]       21
+##  [3,]       22
+##  [4,]       23
+##  [5,]       31
+##  [6,]       41
+##  [7,]       42
+##  [8,]       43
+##  [9,]       52
+## [10,]       71
+## [11,]       81
+## [12,]       82
+## [13,]       90
+## [14,]       95
+```
+]
+
+.pull-right[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-40-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Reprojecting rasters (1)
+
+
+```r
+wgs84 = "EPSG:4326"
+nlcd_wgs84 = project(nlcd, wgs84, method = "near")
+```
+
+---
+# Reprojecting rasters (1)
+
+.pull-left[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-42-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-43-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Reprojecting rasters (2)
+
+
+```r
+crs(srtm, describe = TRUE)
+```
+
+```
+##     name EPSG area         extent
+## 1 WGS 84 4326 &lt;NA&gt; NA, NA, NA, NA
+```
+
+.pull-left[
+
+```r
+hist(srtm)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-45-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-46-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Reprojecting rasters (2)
+
+https://projectionwizard.org/
+
+
+```r
+equalarea = 'PROJCS["ProjWiz_Custom_Albers",
+ GEOGCS["GCS_WGS_1984",
+  DATUM["D_WGS_1984",
+   SPHEROID["WGS_1984",6378137.0,298.257223563]],
+  PRIMEM["Greenwich",0.0],
+  UNIT["Degree",0.0174532925199433]],
+ PROJECTION["Albers"],
+ PARAMETER["False_Easting",0.0],
+ PARAMETER["False_Northing",0.0],
+ PARAMETER["Central_Meridian",-113.04],
+ PARAMETER["Standard_Parallel_1",32.32],
+ PARAMETER["Standard_Parallel_2",42.32],
+ PARAMETER["Latitude_Of_Origin",37.32],
+ UNIT["Meter",1.0]]'
+```
+
+
+```r
+srtm_ea = project(srtm, equalarea, method = "bilinear")
+crs(srtm_ea, describe = TRUE)
+```
+
+```
+##                    name EPSG area         extent
+## 1 ProjWiz_Custom_Albers &lt;NA&gt; &lt;NA&gt; NA, NA, NA, NA
+```
+
+
+---
+# Reprojecting rasters (2)
+
+.pull-left[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-49-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-50-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;!-- Merging/mosaicing rasters --&gt;
+
+---
+class: inverse, left, bottom
+# Raster-vector interactions
+
+---
+# Raster-vector interactions
+
+## Raster cropping and masking
+## Raster extraction - by points, lines, and polygons
+## Rasterization - points, lines, polygons to rasters
+## Vectorization - rasters to polygons or contours
+
+---
+# Raster cropping and masking
+
+
+```r
+library(sf)
+zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
+```
+
+---
+# Raster cropping
+
+
+```r
+srtm_utm_c = crop(srtm_utm, vect(zion))
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-53-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Raster masking
+
+Raster masking is usually done together with cropping.
+
+
+```r
+srtm_utm_m = mask(srtm_utm_c, vect(zion))
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-55-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Raster extraction (by points)
+
+
+```r
+zion_points = read_sf(system.file("vector/zion_points.gpkg", package = "spDataLarge"))
+```
+
+&lt;img src="workshop2_files/figure-html/53-raster-extraction-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Raster extraction (by points)
+
+
+```r
+zion_extract = terra::extract(srtm, vect(zion_points))
+zion_points = cbind(zion_points, zion_extract)
+zion_points
+```
+
+```
+## Simple feature collection with 30 features and 2 fields
+## Geometry type: POINT
+## Dimension:     XY
+## Bounding box:  xmin: -113.2077 ymin: 37.16632 xmax: -112.8717 ymax: 37.43165
+## Geodetic CRS:  WGS 84
+## First 10 features:
+##    ID srtm                       geom
+## 1   1 1802 POINT (-112.9159 37.20013)
+## 2   2 2433 POINT (-113.0937 37.39263)
+## 3   3 1886 POINT (-113.0246 37.33466)
+## 4   4 1370 POINT (-112.9611 37.24326)
+## 5   5 1452 POINT (-112.9898 37.20847)
+## 6   6 1635 POINT (-112.8807 37.19319)
+## 7   7 1380 POINT (-113.0505 37.24061)
+## 8   8 2032 POINT (-113.0953 37.34965)
+## 9   9 1830 POINT (-113.0362 37.31429)
+## 10 10 1860 POINT (-113.2077 37.43165)
+```
+
+---
+# Raster extraction (by polygons)
+
+
+```r
+zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
+zion = st_transform(zion, crs(srtm))
+zion_srtm_values = terra::extract(srtm, vect(zion))
+```
+
+.pull-left[
+
+```r
+head(zion_srtm_values)
+```
+
+```
+##   ID srtm
+## 1  1 1666
+## 2  1 1677
+## 3  1 1708
+## 4  1 1735
+## 5  1 1751
+## 6  1 1770
+```
+]
+.pull-right[
+&lt;img src="workshop2_files/figure-html/53-raster-extraction-13-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Raster extraction (by polygons)
+
+
+```r
+zion_srtm_values = terra::extract(srtm, vect(zion))
+```
+
+
+```r
+library(dplyr)
+zion_srtm_values %&gt;% 
+  group_by(ID) %&gt;% 
+  summarize(across(srtm, list(min = min, mean = mean, max = max)))
+```
+
+```
+## # A tibble: 1 x 4
+##      ID srtm_min srtm_mean srtm_max
+##   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1     1     1122     1818.     2661
+```
+
+---
+# Raster extraction (by polygons)
+
+https://geocompr.robinlovelace.net/geometric-operations.html#rasterization
+
+
+```r
+zion_srtm_values2 = terra::extract(srtm, vect(zion), exact = TRUE)
+```
+
+
+```r
+zion_srtm_values2 %&gt;% 
+  group_by(ID) %&gt;% 
+  summarize(across(srtm, list(min = min, mean = mean, max = max)))
+```
+
+```
+## # A tibble: 1 x 4
+##      ID srtm_min srtm_mean srtm_max
+##   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1     1     1119     1817.     2661
+```
+
+---
+# Rasterization - points, lines, polygons to rasters
+
+Rasterization is a very flexible operation.
+
+The results depend on:
+- the nature of the template raster
+- the type of input vector (e.g., points, polygons)
+- a variety of arguments taken by the `rasterize()` function
+
+
+---
+# Rasterization
+
+
+```r
+zion_points_utm = st_transform(zion_points, crs = crs(nlcd))
+zion_points_utm$vals = sample(1:10, size = nrow(zion_points_utm), replace = TRUE)
+raster_template = rast(ext(zion_points_utm), 
+                       resolution = 4000,
+                       crs = crs(zion_points_utm))
+```
+
+---
+# Rasterization (presence/absence)
+
+
+```r
+ch_raster1 = rasterize(vect(zion_points_utm), raster_template, field = 1)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-59-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Rasterization (count)
+
+
+```r
+ch_raster2 = rasterize(vect(zion_points_utm), raster_template, fun = length)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-61-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Rasterization (aggregated values)
+
+
+```r
+ch_raster3 = rasterize(vect(zion_points_utm), raster_template, field = "vals", 
+                       fun = sum, na.rm = TRUE)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-63-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Vectorization - rasters to polygons or contours
+
+(Mostly) Used when we:
+
+- need to create borders or polygons based on a categorical raster data
+- want to create contour lines
+- are more familiar with operations on vector data
+
+---
+# Vectorization
+
+
+```r
+nlcd_poly = as.polygons(nlcd_recl)
+nlcd_poly_sf = st_as_sf(nlcd_poly)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-65-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Vectorization
+
+
+```r
+srtm_con = as.contour(srtm_utm)
+srtm_con_sf = st_as_sf(srtm_con)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-67-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, left, bottom
+# Conversions
+
+---
+# Conversions
+
+https://github.com/geocompr/geocompr.github.io/blob/source/content/post/2021/spatial-classes.Rmd
+
+---
+class: inverse, left, bottom
+# Output
+
+---
+# Output
+
+- https://geocompr.robinlovelace.net/read-write.html#data-output
+- https://gdal.org/drivers/raster/gtiff.html
+
+
+```r
+writeRaster(nlcd, filename = "nlcd1.tif", gdal = c("COMPRESS=NONE"))
+writeRaster(nlcd, filename = "nlcd2.tif", datatype = "INT1U")
+writeRaster(nlcd, filename = "nlcd3.tif", gdal = c("COMPRESS=DEFLATE"))
+writeRaster(nlcd, filename = "nlcd4.tif", datatype = "INT1U", 
+            gdal = c("COMPRESS=DEFLATE"))
+```
+
+---
+class: inverse, left, bottom
+# Exercises 2
+
+
+---
+# Exercises 2
+
+1. The `nz_elev` raster (system.file("raster/nz_elev.tif", package = "spDataLarge")) has the resolution of 1000 by 1000 meters.
+Resample the raster to the resolution of 2500 by 2500 meters, and then change the output's projection to WGS84 (EPSG: 4326).
+2. Run the following code to get the `nz` object: `data(nz, package = "spData")`. 
+Select the Otago region only.
+Create a map of `nz_elev` with the Otago region's borders on top.
+Next, crop and mask the `nz_elev` to the area of the Otago region only.
+Visualize the results.
+3. Read the `nz_height` object into R (`data(nz_height, package = "spData")`).
+Extract the elevation values from the `nz_elev` raster to the `nz_height` points, and combine the two objects.
+Compare the existing elevation column with the newly extracted values. 
+Are they the same?
+4. Extract elevation values for each region in New Zealand (the `nz` object). 
+Which region has the highest average elevation?
+5. Convert the `nz` object into a raster with a resolution of 5000 by 5000 meters.
+6. Create contour lines based on `nz_elev` with five different levels of values (see the `?graphics::contour` documentation).
+7. Convert the `nz_elev` object into the **stars** object. 
+Where can you find the resolution and projection of the data?
+8. Save the `nz_elev` object as a new GeoTIFF file named `nz_elev_fr.tif`.
+
+---
+class: inverse, left, bottom
+# Raster analysis
+
+---
+# Global or local spatial autocorrelation
+
+`?autocor()`
+
+
+```r
+# global 
+autocor(srtm_utm)
+```
+
+```
+##      srtm 
+## 0.9985794
+```
+
+---
+# Local spatial autocorrelation
+
+https://github.com/rspatial/terra/issues/245
+
+.pull-left[
+
+```r
+# rook's case neighbors
+f = matrix(c(0,1,0,1,0,1,0,1,0), nrow = 3)
+# local 
+srtm_utm_cor = autocor(srtm_utm, w = f,
+                       global = FALSE)
+srtm_utm_cor
+```
+
+```
+## class       : SpatRaster 
+## dimensions  : 1359, 1073, 1  (nrow, ncol, nlyr)
+## resolution  : 31.5303, 31.52466  (x, y)
+## extent      : 301903.3, 335735.4, 4111244, 4154086  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=utm +zone=12 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs 
+## source      : memory 
+## name        :         srtm 
+## min value   : -0.001466758 
+## max value   :     6.394342
+```
+]
+
+--
+
+.pull-right[
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-72-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;!-- Local association functions --&gt;
+
+&lt;!-- `?localFun`, `?corLocal` --&gt;
+
+---
+# Predictions
+
+
+```r
+landsat_path = system.file("raster/landsat.tif", package = "spDataLarge")
+landsat = rast(landsat_path)
+landsat_s = stretch(landsat, maxq = 0.98)
+plotRGB(landsat_s, r = 3, g = 2, b = 1)
+plot(st_geometry(zion_points_utm), add = TRUE, col = "red", cex = 3)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-73-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Predictions
+
+`?predict` - `glm`, `randomForest`, `prcomp`
+
+
+```r
+zion_points_utm_v = extract(landsat_s, vect(zion_points_utm))
+pca = prcomp(zion_points_utm_v[-1])
+pca
+```
+
+```
+## Standard deviations (1, .., p=4):
+## [1] 83.689718 24.939305  9.388554  3.530974
+## 
+## Rotation (n x k) = (4 x 4):
+##              PC1         PC2         PC3        PC4
+## lan_1 -0.5080760  0.20402128 -0.68068384 -0.4867274
+## lan_2 -0.5321682  0.07684548 -0.17022642  0.8257813
+## lan_3 -0.5783656  0.31318090  0.70849728 -0.2558175
+## lan_4 -0.3523479 -0.92433101  0.07565763 -0.1254554
+```
+
+---
+# Predictions
+
+`?predict` - `glm`, `randomForest`, `prcomp`
+
+
+```r
+pca_pred = predict(landsat_s, pca)
+plot(pca_pred)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-75-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Interpolations
+
+`?interpolate`
+
+.pull-left[
+
+```r
+zion_points_srtm = extract(srtm_utm, 
+                      vect(zion_points_utm))
+```
+
+
+```r
+library(fields)
+tps = Tps(st_coordinates(zion_points_utm),
+          zion_points_utm$srtm)
+rt = rast(srtm_utm)
+interp1 = interpolate(rt, tps)
+```
+]
+
+--
+
+.pull-right[
+
+```r
+plot(interp1)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-78-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Interpolations
+
+.lc2[
+
+```r
+library(gstat)
+interpolate_gstat = function(model, x, crs, ...) {
+	v = st_as_sf(x, coords = c("x", "y"), crs = crs)
+	p = predict(model, v, ...)
+	as.data.frame(p)[, 1:2]
+}
+```
+
+
+```r
+v = variogram(srtm ~ 1, data = zion_points_utm)
+# plot(v)
+mv = fit.variogram(v, vgm(120000, "Exp", 12000, nugget = 10000))
+```
+]
+
+.rc2[
+
+```r
+plot(v, model = mv)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-81-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Interpolations
+
+
+```r
+g_OK = gstat(NULL, "srtm", srtm ~ 1, zion_points_utm, model = mv)
+OK = interpolate(rt, g_OK, debug.level = 0, fun = interpolate_gstat,
+                 crs = crs(rt), index = 1)
+plot(OK)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-82-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Segmentations
+
+https://github.com/Nowosad/supercells
+
+
+```r
+library(supercells)
+ortho = rast(system.file("raster/ortho.tif", package = "supercells"))
+plot(ortho)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-83-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Segmentations
+
+
+```r
+ortho_slic1 = supercells(ortho, k = 200, compactness = 10)
+plot(ortho)
+plot(st_geometry(ortho_slic1), add = TRUE)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-84-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Segmentations
+
+
+```r
+rgb_to_hex = function(x){
+  apply(t(x), 2, function(x) rgb(x[1], x[2], x[3], maxColorValue = 255))
+}
+avg_colors = rgb_to_hex(st_drop_geometry(ortho_slic1[4:6]))
+
+plot(ortho)
+plot(st_geometry(ortho_slic1), add = TRUE, col = avg_colors)
+```
+
+&lt;img src="workshop2_files/figure-html/unnamed-chunk-85-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, left, bottom
+# Exercises 3
+
+
+---
+# Exercises 3
+
+1. Calculate different global and local indicators of autocorrelation for the `nz_elev` data (`system.file("raster/nz_elev.tif", package = "spDataLarge")`).
+Interpret the results and visualize the results of local indicators.
+2. Extract the values from the `landsat` dataset (`system.file("raster/landsat.tif", package = "spDataLarge")`) for the `zion_points` object's locations (`zion_points = read_sf(system.file("vector/zion_points.gpkg", package = "spDataLarge"))`).
+Try to use the `predict()` function (see the `?terra::predict` help file) with some method (e.g., glm, gam, randomForest) to predict values of the fourth band (near-infrared - `lan_4`) based on the values of the first three bands (blue, green, and red - `lan_1`, `lan_2`, `lan_3`). 
+Compare the results with the true values.
+3. Read the `nz_height` object into R (`data(nz_height, package = "spData")`).
+Extract the elevation values from the `nz_elev` raster to the `nz_height` points, and combine the two objects.
+Interpolate the elevation values based on the `nz_height` points' values using any method you want and compare the results with `nz_elev`.
+
+---
+class: inverse, left, bottom
+# Summary
+
+---
+# Summary
+
+.pull-left[
+**Many resources are available: **
+
+- **terra** - https://rspatial.github.io/terra/reference/terra-package.html and https://rspatial.org/terra/index.html
+- **raster** - https://rspatial.org/raster/ and https://rpubs.com/etiennebr/visualraster
+- **stars** - https://r-spatial.github.io/stars/index.html and https://r-spatial.org/book/
+- https://geocompr.github.io/
+- https://spacetimewithr.org/Spatio-Temporal%20Statistics%20with%20R.pdf
+- More...
+
+**Sometimes conversion between classes is crucial!**
+]
+
+--
+
+.pull-right[
+**Ask for help, if needed:**
+
+- https://stackoverflow.com/questions/tagged/r
+- https://gis.stackexchange.com/questions/tagged/r
+- https://community.rstudio.com/
+- https://stat.ethz.ch/mailman/listinfo/r-sig-geo
+
+**Contribute something:**
+
+- https://github.com/
+- Provide suggestions 
+- Write bugs reports
+- Make improvements to the documentation, e.g., clarifying unclear sentences, fixing typos
+- Make changes to the code, e.g., to do things in a more efficient way
+- Share your work with #rspatial on Twitter
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
