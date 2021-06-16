@@ -1,0 +1,123 @@
+# ---
+# # Exercises
+
+```{r, message=FALSE}
+library(sf);library(tmap);library(spData);library(dplyr)
+us_states = left_join(us_states, us_states_df, by = c("NAME" = "state"))
+us_states2163 = st_transform(us_states, "EPSG:2163")
+```
+
+1. Run the code above. Create a simple map of the reprojected data for contiguous United States (object `us_states2163`) with the graticule lines.
+
+```{r}
+tm_shape(us_states2163) +
+  tm_polygons() +
+  tm_graticules()
+
+tm_shape(us_states2163) +
+  tm_graticules() +
+  tm_polygons()
+```
+
+2. Improve the map of the reprojected data for contiguous United States by coloring states based on their median income in 2015 (`median_income_15`). 
+Improve the legend title.
+Try different color palettes. 
+Change the width of the borders.
+Put the legend on the right side of the map.
+
+```{r}
+tm_shape(us_states2163) +
+  tm_graticules() +
+  tm_polygons(col = "median_income_15", 
+              title = "Median income (USD, 2015)",
+              palette = "Greens",
+              alpha = 0.9,
+              lwd = 1.2) +
+  tm_layout(legend.outside = TRUE)
+```
+
+3. Try different [color scale styles](https://geocompr.github.io/post/2019/tmap-color-scales/).
+Which one is the best in your opinion?
+
+```{r}
+tm_shape(us_states2163) +
+  tm_graticules() +
+  tm_polygons(col = "median_income_15", 
+              title = "Median income (USD, 2015)",
+              palette = "Greens",
+              alpha = 0.9,
+              lwd = 1.2,
+              style = "jenks",
+              legend.hist = TRUE) +
+  tm_layout(legend.outside = TRUE)
+```
+
+4. Improve the map of the reprojected data for contiguous United States (object `us_states2163`) further by adding a map title, scale bar, north arrow, and text annotation.
+Try to improve locations of the map elements.
+
+```{r}
+tm_shape(us_states2163) +
+  tm_graticules() +
+  tm_polygons(col = "median_income_15", 
+              title = "Median income (USD, 2015)",
+              palette = "Greens",
+              alpha = 0.9,
+              lwd = 1.2,
+              style = "jenks",
+              legend.hist = TRUE) +
+  tm_scale_bar(position = c("left", "bottom"),
+               breaks = c(0, 500, 1000)) +
+  tm_compass(position = c("LEFT", "TOP")) +
+  tm_credits("JN, 2021") +
+  tm_layout(legend.outside = TRUE,
+            main.title = "The contiguous United States")
+```
+
+5. Change the tmap mode to "view" and recreate maps from Exercise 4.
+What are the pros and cons of using static or interactive maps? 
+What are the map's elements that can exist in static maps, but are not rendered in the interactive maps?
+
+```{r}
+tmap_mode("view")
+tm_shape(us_states2163) +
+  tm_graticules() +
+  tm_polygons(col = "median_income_15", 
+              title = "Median income (USD, 2015)",
+              palette = "Greens",
+              alpha = 0.9,
+              lwd = 1.2,
+              style = "jenks",
+              legend.hist = TRUE) +
+  tm_scale_bar(position = c("left", "bottom"),
+               breaks = c(0, 500, 1000)) +
+  tm_compass(position = c("LEFT", "TOP")) +
+  tm_credits("JN, 2021") +
+  tm_layout(legend.outside = TRUE,
+            main.title = "The contiguous United States")
+```
+
+6. Save the map from Exercise 4 as a .png, .svg, and .html file. 
+When can different file formats be useful?
+
+```{r}
+new_tm = tm_shape(us_states2163) +
+  tm_graticules() +
+  tm_polygons(col = "median_income_15", 
+              title = "Median income (USD, 2015)",
+              palette = "Greens",
+              alpha = 0.9,
+              lwd = 1.2,
+              style = "jenks",
+              legend.hist = TRUE) +
+  tm_scale_bar(position = c("left", "bottom"),
+               breaks = c(0, 500, 1000)) +
+  tm_compass(position = c("LEFT", "TOP")) +
+  tm_credits("JN, 2021") +
+  tm_layout(legend.outside = TRUE,
+            main.title = "The contiguous United States")
+tmap_save(new_tm, "new_tm.png")
+tmap_save(new_tm, "new_tm.svg")
+tmap_save(new_tm, "new_tm.html")
+```
+
+
