@@ -16,5 +16,708 @@ output:
 ---
 
 ```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(fig.align = "center", cache = FALSE, fig.height = 5)
 options(htmltools.dir.version = FALSE)
+```
+
+class: inverse, left, bottom
+# Mapping
+
+---
+# Mapping
+
+```{r}
+library(sf)
+library(terra)
+library(tmap)
+library(spData)
+library(spDataLarge)
+```
+
+---
+# Mapping
+
+```{r}
+nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
+```
+
+```{r}
+plot(nz_elev)
+```
+
+---
+# Mapping
+
+```{r}
+data("nz", package = "spData")
+plot(nz)
+```
+
+---
+# Mapping
+
+```{r}
+data("nz_height", package = "spData")
+plot(nz_height)
+```
+
+---
+# Mapping
+
+.pull-left[
+```{r tm1, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_graticules() +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200),
+               text.size = 1) +
+  tm_compass(position = c("right", "top"),
+             type = "rose", 
+             size = 2) +
+  tm_credits(text = "J. Nowosad, 2021") +
+  tm_layout(main.title = "New Zealand",
+            bg.color = "lightblue",
+            inner.margins = c(0, 0, 0, 0))
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1", "png")
+)
+```
+]
+
+---
+class: inverse, left, bottom
+# Shapes and layers
+
+---
+# Shapes and layers
+
+.pull-left[
+There is also `tm_rgb()`.
+```{r tm1a, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral")
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1a", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+```{r tm2, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) + #<<
+  tm_graticules() +
+  tm_raster(title = "Elevation (m asl)", #<<
+            style = "cont", #<<
+            palette = "-Spectral") + #<<
+  tm_shape(nz) +  #<<
+  tm_borders(col = "black",  #<<
+             lwd = 1) + #<<
+  tm_shape(nz_height) +  #<<
+  tm_symbols(size = 0.2, col = "red") + #<<
+  tm_add_legend(type = "symbol", col = "red", #<<
+                title = "Highest peaks") + #<<
+  tm_scale_bar(breaks = c(0, 100, 200),
+               text.size = 1) +
+  tm_compass(position = c("right", "top"),
+             type = "rose", 
+             size = 2) +
+  tm_credits(text = "J. Nowosad, 2021") +
+  tm_layout(main.title = "New Zealand",
+            bg.color = "lightblue",
+            inner.margins = c(0, 0, 0, 0))
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm2", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+https://geocompr.github.io/post/2019/tmap-color-scales/
+```{r tm1b, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "pretty",
+            palette = "-Spectral")
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1b", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+`tmaptools::palette_explorer()`
+```{r tm1c, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "pretty",
+            palette = "Reds") # minus reverse the color scale
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1c", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+There are also `tm_fill()` and `tm_polygons()`.
+```{r tm1d, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1)
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1d", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+There are also `tm_fill()` and `tm_polygons()`.
+```{r tm1e, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz) +
+  tm_polygons(col = "Median_income",
+              title = "Median income (USD)",
+              style = "jenks",
+              legend.hist = TRUE)
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1e", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+There are also `tm_dots()`, `tm_text()`, and more...
+```{r tm1f, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +
+  tm_symbols(size = 0.2, col = "red")
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1f", "png")
+)
+```
+]
+
+---
+# Shapes and layers
+
+.pull-left[
+```{r tm1g, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks")
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm1g", "png")
+)
+```
+]
+
+---
+class: inverse, left, bottom
+# Attributes layers
+
+---
+# Attributes layers
+
+.pull-left[
+```{r tm3, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_graticules() +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +  
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200), #<<
+               text.size = 1) + #<<
+  tm_compass(position = c("right", "top"), #<<
+             type = "rose", #<<
+             size = 2) + #<<
+  tm_credits(text = "J. Nowosad, 2021") + #<<
+  tm_layout(main.title = "New Zealand",
+            bg.color = "lightblue",
+            inner.margins = c(0, 0, 0, 0))
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm3", "png")
+)
+```
+]
+
+---
+# Attributes layers
+
+.pull-left[
+```{r tm3a, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_scale_bar(breaks = c(0, 100, 200),
+               text.size = 1) +
+  tm_compass(position = c("right", "top"), 
+             type = "rose", 
+             size = 2) + 
+  tm_credits(text = "J. Nowosad, 2021") 
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm3a", "png")
+)
+```
+]
+
+---
+# Attributes layers
+
+.pull-left[
+```{r tm3b, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_scale_bar(breaks = c(0, 100, 200),
+             text.size = 1,
+             position = c("left", "center")) +
+  tm_compass(position = c("right", "bottom"), 
+             type = "rose",
+             size = 2) +
+  tm_credits(text = "J. Nowosad, 2021", 
+             position = c("right", "top"))
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm3b", "png")
+)
+```
+]
+
+---
+# Attributes layers
+
+.pull-left[
+```{r tm3c, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_scale_bar() + 
+  tm_compass(position = c("right", "top"), 
+             type = "4star", 
+             size = 4) + 
+  tm_credits(text = "J. Nowosad, 2021") 
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm3c", "png")
+)
+```
+]
+
+---
+class: inverse, left, bottom
+# Grids and graticules
+
+---
+# Grids and graticules
+
+.pull-left[
+```{r tm4, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_graticules() + #<<
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +  
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200), 
+               text.size = 1) + 
+  tm_compass(position = c("right", "top"), 
+             type = "rose", 
+             size = 2) + 
+  tm_credits(text = "J. Nowosad, 2021") + 
+  tm_layout(main.title = "New Zealand",
+            bg.color = "lightblue",
+            inner.margins = c(0, 0, 0, 0))
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm4", "png")
+)
+```
+]
+
+---
+# Grids and graticules
+
+.pull-left[
+There is also `tm_grid()` - https://geocompr.github.io/post/2019/tmap-grid/.
+```{r tm4a, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_graticules(x = seq(166, 178, 2))
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm4a", "png")
+)
+```
+]
+
+---
+class: inverse, left, bottom
+# Layout
+
+---
+# Layout
+
+.pull-left[
+```{r tm5, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_graticules() + 
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +  
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200), 
+               text.size = 1) + 
+  tm_compass(position = c("right", "top"), 
+             type = "rose", 
+             size = 2) + 
+  tm_credits(text = "J. Nowosad, 2021") + 
+  tm_layout(main.title = "New Zealand", #<<
+            bg.color = "lightblue", #<<
+            inner.margins = c(0, 0, 0, 0)) #<<
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm5", "png")
+)
+```
+]
+
+---
+# Layout
+
+.pull-left[
+```{r tm5a, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_layout(main.title = "New Zealand", 
+            title = "My first {tmap}",
+            bg.color = "#add8e6",
+            legend.show = FALSE) 
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm5a", "png")
+)
+```
+]
+
+---
+# Layout
+
+.pull-left[
+```{r tm5c, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_layout(main.title = "New Zealand", 
+            title = "My first {tmap}",
+            bg.color = "#add8e6") 
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm5c", "png")
+)
+```
+]
+
+---
+# Layout
+
+.pull-left[
+```{r tm5d, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_layout(main.title = "New Zealand", 
+            title = "My first {tmap}",
+            bg.color = "#add8e6",
+            legend.outside = TRUE,
+            frame = FALSE) 
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm5d", "png")
+)
+```
+]
+
+---
+# Layout
+
+.pull-left[
+```{r tm5e, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+tm_shape(nz_elev) +
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_layout(main.title = "New Zealand", 
+            title = "My first {tmap}",
+            bg.color = "#add8e6",
+            inner.margins = c(0.01, 0.01,
+                              0.01, 0.2)) 
+```
+]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics(
+  knitr::fig_chunk("tm5e", "png")
+)
+```
+]
+
+---
+class: inverse, left, bottom
+# Modes
+
+---
+# Modes
+
+.pull-left[
+```{r tm6, warning=FALSE, eval=FALSE, message=FALSE, fig.height = 7}
+tmap_mode("view") #plot or view
+tm_shape(nz_elev) +
+  tm_graticules() + 
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +  
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200), 
+               text.size = 1) + 
+  tm_compass(position = c("right", "top"), 
+             type = "rose", 
+             size = 2) + 
+  tm_credits(text = "J. Nowosad, 2021") + 
+  tm_layout(main.title = "New Zealand", 
+            bg.color = "lightblue", 
+            inner.margins = c(0, 0, 0, 0)) 
+```
+]
+.pull-right[
+```{r, echo=FALSE, message=FALSE, warning=FALSE, purl=FALSE}
+tmap_mode("view") #plot or view
+tm_shape(nz_elev) +
+  tm_graticules() + 
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +  
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200), 
+               text.size = 1) + 
+  tm_compass(position = c("right", "top"), 
+             type = "rose", 
+             size = 2) + 
+  tm_credits(text = "J. Nowosad, 2021") + 
+  tm_layout(main.title = "New Zealand", 
+            bg.color = "lightblue", 
+            inner.margins = c(0, 0, 0, 0)) 
+```
+]
+
+---
+class: inverse, left, bottom
+# Saving
+
+---
+# Saving
+
+
+.pull-left[
+```{r tm7, warning=FALSE, fig.show='hide', message=FALSE, fig.height = 7}
+my_map = tm_shape(nz_elev) +
+  tm_graticules() + 
+  tm_raster(title = "Elevation (m asl)", 
+            style = "cont",
+            palette = "-Spectral") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_shape(nz_height) +  
+  tm_symbols(size = 0.2, col = "red") +
+  tm_add_legend(type = "symbol", col = "red",
+                title = "Highest peaks") +
+  tm_scale_bar(breaks = c(0, 100, 200), 
+               text.size = 1) + 
+  tm_compass(position = c("right", "top"), 
+             type = "rose", 
+             size = 2) + 
+  tm_credits(text = "J. Nowosad, 2021") + 
+  tm_layout(main.title = "New Zealand", 
+            bg.color = "lightblue", 
+            inner.margins = c(0, 0, 0, 0)) 
+```
+]
+
+--
+
+.pull-right[
+
+```{r, message=FALSE, warning=FALSE}
+tmap_mode("plot")
+my_map
+```
+
+]
+
+---
+# Saving
+
+```{r tm8, eval=FALSE}
+tmap_save(my_map, filename = "my_map.png", width = 300, height = 800, dpi = 300)
+```
+
+
+---
+class: inverse, left, bottom
+# Exercises 3
+
+```{r child = 'exercises3.Rmd'}
 ```
