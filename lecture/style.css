@@ -5,6 +5,12 @@
   size: 908px 681px;
   margin: 0;
 }*/
+
+@page {
+  size: 1210px 681px;
+  margin: 0;
+}
+
 .tiny .remark-code { /*Change made here*/
   font-size: 70% !important;
 }
@@ -26,11 +32,6 @@ quote:before {
 }
 quote p {
   display: inline;
-}
-
-@page {
-  size: 1210px 681px;
-  margin: 0;
 }
 
 @media print {
@@ -55,16 +56,24 @@ color: #2199e8;
 	font-size: 90%;
 }
 
+.captionstyle {
+  color:white;
+  background-color:black;
+  font-weight:bold
+}
+
 .lc {
   width: 30%;
   height: 92%;
   float: left;
+  padding-top: 0;
 }
 
 .rc {
-  width: 70%;
+  width: 68%;
   float: right;
   height: 92%;
+  padding-top: 0;
 }
 
 .lc2 {
