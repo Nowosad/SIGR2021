@@ -820,7 +820,7 @@ class: inverse, left, bottom
 ---
 # Conversions
 
-https://github.com/geocompr/geocompr.github.io/blob/source/content/post/2021/spatial-classes.Rmd
+https://geocompr.github.io/post/2021/spatial-classes-conversion/
 
 ---
 class: inverse, left, bottom
