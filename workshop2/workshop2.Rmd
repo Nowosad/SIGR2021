@@ -1044,6 +1044,7 @@ class: inverse, left, bottom
 - **stars** - https://r-spatial.github.io/stars/index.html and https://r-spatial.org/book/
 - https://geocompr.github.io/
 - https://spacetimewithr.org/Spatio-Temporal%20Statistics%20with%20R.pdf
+- https://jean-romain.github.io/lidRbook/index.html
 - More...
 
 **Sometimes conversion between classes is crucial!**
