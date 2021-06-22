@@ -77,7 +77,8 @@ pkgs = c(
   "spDataLarge",
   "gstat",
   "raster",
-  "fields"
+  "fields",
+  "mapsf"
 )
 # Install the packages with the following command
 # (will not reinstall packages already installed)
@@ -91,6 +92,12 @@ remotes::install_github("Nowosad/spDataLarge")
 remotes::install_github("Nowosad/supercells")
 ```
 
+Much of the material is based on the book Geocomputation with R.
+To install packages needed to reproduce the book (and many of the packages needed for the course) run the following command:
+
+```{r, eval=FALSE}
+remotes::install_github("geocompr/geocompkg")
+```
 
 
 
