@@ -72,7 +72,6 @@ pkgs = c(
   "terra",
   "tmap",
   "stars",
-  "icons",
   "dplyr",
   "spDataLarge",
   "gstat",
@@ -99,5 +98,9 @@ To install packages needed to reproduce the book (and many of the packages neede
 remotes::install_github("geocompr/geocompkg")
 ```
 
+```{r, echo=FALSE, eval=FALSE, echo=FALSE}
+# additional packages for slides
+remotes::install_github("mitchelloharawild/icons")
+```
 
 

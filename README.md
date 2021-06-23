@@ -77,12 +77,12 @@ pkgs = c(
   "terra",
   "tmap",
   "stars",
-  "icons",
   "dplyr",
   "spDataLarge",
   "gstat",
   "raster",
-  "fields"
+  "fields",
+  "mapsf"
 )
 # Install the packages with the following command
 # (will not reinstall packages already installed)
@@ -91,20 +91,12 @@ remotes::install_cran(pkgs)
 #>   Use `force = TRUE` to force installation
 #> Skipping install of 'spData' from a cran remote, the SHA1 (0.3.10) has not changed since last install.
 #>   Use `force = TRUE` to force installation
-#> Skipping install of 'terra' from a cran remote, the SHA1 (1.2-10) has not changed since last install.
+#> Skipping install of 'terra' from a cran remote, the SHA1 (1.3-4) has not changed since last install.
 #>   Use `force = TRUE` to force installation
 #> Skipping install of 'tmap' from a cran remote, the SHA1 (3.3-2) has not changed since last install.
 #>   Use `force = TRUE` to force installation
 #> Skipping install of 'stars' from a cran remote, the SHA1 (0.5-3) has not changed since last install.
 #>   Use `force = TRUE` to force installation
-#> Installing 1 packages: icons
-#> Installing package into '/home/robin/R/x86_64-pc-linux-gnu-library/4.0'
-#> (as 'lib' is unspecified)
-#> Warning: package 'icons' is not available for this version of R
-#> 
-#> A version of this package for your version of R might be available elsewhere,
-#> see the ideas at
-#> https://cran.r-project.org/doc/manuals/r-patched/R-admin.html#Installing-packages
 #> Skipping install of 'dplyr' from a cran remote, the SHA1 (1.0.7) has not changed since last install.
 #>   Use `force = TRUE` to force installation
 #> Installing 1 packages: spDataLarge
@@ -121,6 +113,8 @@ remotes::install_cran(pkgs)
 #>   Use `force = TRUE` to force installation
 #> Skipping install of 'fields' from a cran remote, the SHA1 (12.3) has not changed since last install.
 #>   Use `force = TRUE` to force installation
+#> Skipping install of 'mapsf' from a cran remote, the SHA1 (0.2.0) has not changed since last install.
+#>   Use `force = TRUE` to force installation
 ```
 
 Furthermore, we will install a couple of packages that are not available
@@ -135,4 +129,12 @@ remotes::install_github("Nowosad/supercells")
 #> Using github PAT from envvar GITHUB_PAT
 #> Skipping install of 'supercells' from a github remote, the SHA1 (48c4c6f9) has not changed since last install.
 #>   Use `force = TRUE` to force installation
+```
+
+Much of the material is based on the book Geocomputation with R. To
+install packages needed to reproduce the book (and many of the packages
+needed for the course) run the following command:
+
+``` r
+remotes::install_github("geocompr/geocompkg")
 ```
