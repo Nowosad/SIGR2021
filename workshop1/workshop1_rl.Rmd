@@ -18,3 +18,12 @@ output:
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
 ```
+
+Ideas: 
+
+- Intro to vector data with nz
+  - Non spatial operations
+  - Spatial operations e.g. spatial subsetting
+  - Questions from the book
+  
+- Advanced: transport data based on the transport chapter
