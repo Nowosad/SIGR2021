@@ -28,10 +28,18 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # What can you do with geographic data + R?
 
+--
+
 .left-column[
 
 - Exploratory data analysis
-- Data processing
+- Data processing (e.g. adding new variables, 'adding value')
+- Data transformation (e.g. changing CRS, reducing size via simplification/aggregation)
+- Output data in different formats (e.g. creating a .GeoTIFF or .shp file from an unusual format)
+- Data visualisation
+- Web application development
+- Software development e.g. to share new methdods
+- Any field of research that uses geographic data!
 
 ]
 
@@ -39,6 +47,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 .right-column[
+
+R is a (geo)computational power tool! 
 
 ```{r, out.width="100%"}
 knitr::include_graphics("https://user-images.githubusercontent.com/1825120/38543030-5794b6f0-3c9b-11e8-9da9-10ec1f3ea726.gif")
