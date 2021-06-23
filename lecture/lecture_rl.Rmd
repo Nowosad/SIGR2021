@@ -1,6 +1,6 @@
 ---
 title: "GIS and mapping"
-subtitle: "A lecture on the GIS and mapping ecosystem of R"
+subtitle: "A lecture on the GIS and mapping ecosystem of R: packages, reading, writing"
 author: "Robin Lovelace & Jakub Nowosad"
 date: ""
 output:
@@ -17,4 +17,37 @@ output:
 
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
+
+# Contents
+
+
+
+---
+
+# What can you do with geographic data + R?
+
+.left-column[
+
+- Exploratory data analysis
+- Data processing
+
+]
+
+--
+
+
+.right-column[
+
+```{r, out.width="100%"}
+knitr::include_graphics("https://user-images.githubusercontent.com/1825120/38543030-5794b6f0-3c9b-11e8-9da9-10ec1f3ea726.gif")
+```
+
+]
+
+
+---
+
+
+

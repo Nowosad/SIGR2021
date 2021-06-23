@@ -1,7 +1,7 @@
 ---
 title: "GIS and mapping"
-subtitle: "A workshop on GIS and mapping with R"
-author: "Robin Lovelace & Jakub Nowosad"
+subtitle: "A workshop on GIS and mapping with R: data visualisation"
+author: "Jakub Nowosad & Robin Lovelace"
 date: ""
 output:
   xaringan::moon_reader:
