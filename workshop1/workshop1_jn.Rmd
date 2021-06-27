@@ -717,7 +717,7 @@ tmap_save(my_map, filename = "my_map.png", width = 300, height = 800, dpi = 300)
 
 ---
 class: inverse, left, bottom
-# Exercises 3
+# Exercises
 
 ```{r child = 'exercises3.Rmd'}
 ```

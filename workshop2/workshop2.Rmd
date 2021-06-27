@@ -1,7 +1,7 @@
 ---
 title: "Image processing and all things raster"
 subtitle: "A workshop on image processing and raster analysis with R"
-author: "Jakub Nowosad & Robin Lovelace"
+author: "Jakub Nowosad"
 date: ""
 output:
   xaringan::moon_reader:
