@@ -15,6 +15,24 @@ output:
       titleSlideClass: [left, bottom, inverse]
 ---
 
+
+<!-- Ideas:  -->
+
+<!-- - Exploring data structures based on NZ examples -->
+
+
+<!-- - Intro to vector data with nz -->
+<!--   - Non spatial operations -->
+<!--   - Spatial operations e.g. spatial subsetting -->
+<!--   - Questions from the book -->
+
+<!-- - Getting data into R: -->
+<!--   - Directly reading in from url -->
+<!--   - OSM data with osmdata and `osmextract` packages -->
+
+
+<!-- - Advanced: transport data based on the transport chapter -->
+
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
 ```
@@ -55,28 +73,84 @@ options(htmltools.dir.version = FALSE)
 
 ]
 
-```{r}
+---
 
+# Setup: Packages we'll be using
+
+.pull-left[
+
+- [spData](https://github.com/Nowosad/spData) contains example spatial datasets
+
+- [osmdata](https://github.com/ropensci/osmdata) gets small OpenStreetMap (OSM) datasets
+
+- [osmextract](https://github.com/ropensci/osmextract) gets large OSM datasets
+
+- [nzelect](https://github.com/ellisp/nzelect) gets official voting data from New Zealand
+
+```{r, echo=FALSE, out.width="50%", fig.show='hold'}
+knitr::include_graphics(c(
+  "https://docs.ropensci.org/osmextract/reference/figures/logo.svg",
+  "https://raw.githubusercontent.com/ropensci/osmdata/main/man/figures/osmhex.png"
+))
 ```
 
 
 
-Ideas: 
+]
 
-- Exploring data structures based on NZ examples
+.pull-right[
+
+```{r}
+# Install packages
+# install.packages("remotes") # you'll need the remotes package
+pkgs = c(
+  "spData",
+  "osmdata",
+  "osmextract",
+  "nzelect"
+)
+```
+
+```{r, eval=FALSE}
+remotes::install_cran(pkgs)
+```
+
+```{r}
+library(osmextract)
+# Data (c) OpenStreetMap contributors, ODbL 1.0. https://www.openstreetmap.org/copyright.
+# Check the package website, https://docs.ropensci.org/osmextract/, for more details.
+```
 
 
-- Intro to vector data with nz
-  - Non spatial operations
-  - Spatial operations e.g. spatial subsetting
-  - Questions from the book
-  
-- Getting data into R:
-  - Directly reading in from url
-  - OSM data with osmdata and `osmextract` packages
-  
-  
-- Advanced: transport data based on the transport chapter
+]
+
+---
+
+# Getting data that 'ship' with packages
+
+.left-column[
+
+## Why use example datasets?
+
+- Reproducibility
+
+- Avoid sharing sensitive data
+
+<!-- - Speed of execution -->
+
+<!-- Encourages generalisation of code to work with multiple datasetsm -->
+
+]
+
+```{r}
+# ?datasets
+# library(help = "datasets") # lots of great example datasets, use them!
+world_phones_new = datasets::WorldPhones
+class(world_phones_new)
+class(spData::nz)
+```
+
+
 
 
 
