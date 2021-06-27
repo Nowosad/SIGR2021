@@ -19,6 +19,48 @@ output:
 options(htmltools.dir.version = FALSE)
 ```
 
+# Getting and downloading data
+
+.pull-left[
+
+## Schedule
+
+14:00 - 14:05 Set-up and overview
+
+14:05 - 14:20 Demonstration from Robin of the code to get data and process from New Zealand (I do)
+
+14:20 - 14:35 Getting started with getting and exploring data from New Zealand (we do)
+
+14:35 - 14:55 Working through the questions
+
+14:55 - 15:00 Break and preparation for visualisation section
+
+15:00 - 16:00 Data visualisation workshop
+
+]
+
+--
+
+.pull-right[
+
+## Learning outcomes
+
+### Get data 'shipped' with packages
+
+### Get data from data provider packages
+
+### Get data from OSM
+
+### Get data from websites
+
+]
+
+```{r}
+
+```
+
+
+
 Ideas: 
 
 - Exploring data structures based on NZ examples
@@ -35,4 +77,6 @@ Ideas:
   
   
 - Advanced: transport data based on the transport chapter
+
+
 
