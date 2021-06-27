@@ -44,11 +44,13 @@ knitr::opts_chunk$set(echo = FALSE)
 
 .right-column[
 
-```{r, out.width="80%"}
+```{r, out.width="80%", message=FALSE}
 library(tmap)
 tmap_mode("view")
-locations = tmaptools::geocode_OSM(c("leeds", "poznan", "saint-pierre-d'oleron"), as.sf = TRUE)
-qtm(locations)
+locations = tmaptools::geocode_OSM(c("leeds", "poznan", "nurnberg", "saint-pierre-d'oleron"), as.sf = TRUE)
+tm_shape(locations) +
+  tm_dots(col = "red", size = 0.1, alpha = 0.5, popup.vars = "query") +
+  tm_text("query")
 ```
 
 
@@ -186,6 +188,19 @@ Reproducible source code: https://github.com/Robinlovelace/geocompr/blob/master/
 <!-- --- -->
 
 <!-- Example of domain specific package: stplanr? -->
+
+---
+
+# Data analysis pipelines
+
+![](https://user-images.githubusercontent.com/1825120/123537471-892c2480-d727-11eb-81d2-25586aab9c3f.png)
+
+
+---
+
+# Creating functions and packages
+
+
 
 ---
 
