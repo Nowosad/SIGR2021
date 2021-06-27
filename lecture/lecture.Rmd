@@ -71,6 +71,13 @@ knitr::include_graphics("figs/logo-sabre.png")
 ```
 ]
 
+---
+
+# Housekeeping
+
+## Where to ask questions: 
+
+- GithHub https://github.com/Nowosad/SIGR2021
 
 ---
 class: inverse, left, bottom

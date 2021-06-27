@@ -21,9 +21,18 @@ options(htmltools.dir.version = FALSE)
 
 Ideas: 
 
+- Exploring data structures based on NZ examples
+
+
 - Intro to vector data with nz
   - Non spatial operations
   - Spatial operations e.g. spatial subsetting
   - Questions from the book
   
+- Getting data into R:
+  - Directly reading in from url
+  - OSM data with osmdata and `osmextract` packages
+  
+  
 - Advanced: transport data based on the transport chapter
+
