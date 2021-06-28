@@ -91,11 +91,33 @@ knitr::include_graphics("figs/logo-sabre.png")
 
 ---
 
-# Housekeeping
+# Where to ask questions: 
 
-## Where to ask questions: 
+.pull-left[
 
-- GithHub https://github.com/Nowosad/SIGR2021
+## During the course
+
+- GitHub for any technical questions + sharing code https://github.com/Nowosad/SIGR2021
+- In the chat 
+- In person
+
+]
+
+.pull-right[
+
+## After the course
+
+- StackOverflow, general questions, quick answers
+
+]
+
+--
+
+Creating a reproducible example with reprex:
+
+1. Find or write some code to test (e.g. `plot(spData::world)`)
+2. Copy it (`Clt+C`)
+3. Create a reproducible example with `reprex::reprex()`
 
 ---
 class: inverse, left, bottom
@@ -197,6 +219,129 @@ knitr::include_graphics("figs/worlds_animate_without_antarctica2.gif")
 </a>
 ]
 
+---
+
+# What can you do with geographic data + R?
+
+.left-column[
+
+- Exploratory data analysis ([EDA](https://r4ds.had.co.nz/exploratory-data-analysis.html))
+- Output data in different formats (e.g. creating a .GeoTIFF or .shp file to share with others)
+- Data processing (e.g. adding new variables, 'adding value')
+- Data transformation (e.g. [changing CRS](https://geocompr.robinlovelace.net/reproj-geo-data.html), reducing size via simplification/aggregation)
+- Data [visualisation](https://geocompr.robinlovelace.net/adv-map.html#mapping-applications)
+- Web application development
+- Software development e.g. to share new methdods
+
+]
+
+--
+
+.right-column[
+
+```{r, out.width="100%", echo=FALSE}
+knitr::include_graphics("https://user-images.githubusercontent.com/1825120/38543030-5794b6f0-3c9b-11e8-9da9-10ec1f3ea726.gif")
+```
+
+]
+
+---
+
+# R is a (geo)computational power tool! 
+
+.left-column[
+
+#### R's flexibility enables 100s of people to create new tools
+
+#### R can be seen as the 'engine' that enables functionality provided in packages
+
+![](https://openclipart.org/image/800px/98191)
+
+#### That provides flexibility but has some consequences...
+
+]
+
+--
+
+.right-column[
+
+### It's important to use the right tool for the job
+
+![](https://user-images.githubusercontent.com/1825120/123144850-0f104d00-d454-11eb-80c1-5fb860d10482.gif)
+
+]
+
+---
+
+background-image: url("https://camo.githubusercontent.com/f032cac4c2273236d3d70f384b34f76a5cf70f9d00d4c868bed0ac3f5c3b52d4/68747470733a2f2f692e696d6775722e636f6d2f415478487764462e706e67")
+
+### Which type of data is best?
+
+???
+
+Raster data tends to be more appropriate for physical sciences
+
+---
+
+# Sharing your ideas with R
+
+## R's ecosystem makes it easy to communicate your results
+
+```{r, echo=FALSE}
+knitr::include_graphics("https://user-images.githubusercontent.com/1825120/123699833-9a744e80-d857-11eb-9fde-3847970a04dc.png")
+```
+
+---
+
+# Tips for sharing maps
+
+.pull-left[
+
+- Copy paste into emails
+- Set width and resolution carefully for publication
+- Use vector graphics (e.g. svg/pdf) when appropriate
+- Save `tmap` maps with `tmap_save(map, "map.html")` and send the html
+- One click publishing with RStudio
+
+## See rpubs.com/robinlovelace
+
+]
+
+.pull-right[
+
+![](https://user-images.githubusercontent.com/1825120/123700406-56ce1480-d858-11eb-8d6b-961c61d94390.png)
+
+]
+
+---
+
+# Building your own packages and distributing code
+
+.left-column[
+
+### Great way to share code is on GitHub
+
+- Next step: reproducible README
+
+```{r, eval=FALSE}
+usethis::use_readme_rmd()
+```
+
+#### Example packages
+
+- [stats19](https://docs.ropensci.org/stats19): data
+- [sabre](https://github.com/Nowosad/sabre): methods
+- [supercells](https://github.com/Nowosad/supercells): methods
+- [noise-phenomena](https://github.com/cboettig/noise-phenomena) academic paper
+
+]
+
+.right-column[
+
+![](https://raw.githubusercontent.com/hadley/r-pkgs/master/images/cover.png
+)
+
+]
 
 
 ---
@@ -240,8 +385,6 @@ Learn more at https://cran.r-project.org/web/views/Spatial.html, https://cran.r-
 # citation()
 citation("tmap")
 ```
-
-
 
 ---
 # R spatial infrastructure
@@ -362,13 +505,15 @@ rast(elev)
 ```
 
 ---
+
 # terra
 
-```{r 05-rspatial-classes-12 }
-plot(elev)
+```{r 05-rspatial-classes-12}
+# plot(elev)
 ```
 
 ---
+
 # terra
 
 ```{r}
@@ -1509,6 +1654,64 @@ new_raster = rast(raster_filepath)
 crs(new_raster, describe = TRUE) # get CRS
 crs(new_raster) = "EPSG:6341" # set CRS
 ```
+
+
+---
+
+## What is Geocomputation?
+
+
+.pull-left[
+
+> GeoComputation is about using the various different types of geodata and about developing relevant geo-tools within the overall context of a 'scientific' approach (Openshaw 2000).
+
+]
+
+.pull-right[
+```{r, echo=FALSE, message=FALSE}
+knitr::include_graphics("http://www.ccg.leeds.ac.uk/people/s.openshaw/s.openshaw.png")
+```
+]
+
+--
+
+- But we do differ from early definitions in one important way:
+
+> At the turn of the 21st Century it was unrealistic to expect readers to be able to reproduce code examples, due to barriers preventing access to the necessary hardware, software and data
+
+---
+
+## What's in the geocompr box?
+
+.pull-left[
+
+- Chapter 1: History + 'philosophy' = important
+
+Foundations
+
+- Starting from nothing
+- Class definitions
+- Spatial/attribute operations
+- Projections 
+- Data IO
+
+Extensions
+
+- Advanced methods
+- How to build your own functions
+
+Applications
+
+- A taster of what you can do
+
+]
+
+.pull-right[
+```{r, echo=FALSE, message=FALSE, out.height="500"}
+knitr::include_graphics("https://raw.githubusercontent.com/Robinlovelace/geocompr/master/images/frontcover.png")
+```
+]
+
 
 ---
 class: inverse, left, bottom
