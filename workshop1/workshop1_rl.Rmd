@@ -45,11 +45,14 @@ options(htmltools.dir.version = FALSE)
 
 14:00 - 14:05 Set-up and overview
 
-14:05 - 14:20 Demonstration from Robin of the code to get data and process from New Zealand (I do)
+14:05 - 14:20 Demonstration of getting data 
+<!-- (I do) -->
 
-14:20 - 14:35 Getting started with getting and exploring data from New Zealand (we do)
+14:20 - 14:35 Getting started with getting and exploring data from New Zealand
+<!-- (we do) -->
 
 14:35 - 14:55 Working through the questions
+<!-- you do -->
 
 14:55 - 15:00 Break and preparation for visualisation section
 
@@ -138,6 +141,10 @@ library(osmextract)
 
 <!-- - Speed of execution -->
 
+<!-- Documentation -->
+
+- Any other reasons?
+
 <!-- Encourages generalisation of code to work with multiple datasetsm -->
 
 ]
@@ -150,7 +157,85 @@ class(world_phones_new)
 class(spData::nz)
 ```
 
+--
+
+## Documenting datasets
+
+See https://a-b-street.github.io/abstr/reference/montlake_buildings.html
+
+--
+
+## Exercise
+
+Take a look at the help for `datasets` and plot two examples.
+
+---
+
+# Plotting air passengers
+
+```{r, eval=FALSE}
+?AirPassengers
+```
 
 
+
+```{r}
+AirPassengers
+class(AirPassengers)
+plot(AirPassengers)
+```
+
+---
+
+# A couple of other datasets
+
+```{r, fig.show='hold'}
+plot(UKDriverDeaths)
+plot(CO2)
+```
+
+```{r}
+```
+
+---
+
+# Joining non-geographic data to geometries
+
+Idea: create animation from the WorldPhones dataset
+
+---
+
+
+# Getting data from New Zealand I
+
+
+---
+
+# Getting data from New Zealand II
+
+
+---
+
+# Filtering 
+
+
+---
+
+# Mutating
+
+
+---
+
+# Geographic joins
+
+
+---
+
+# Geometric operations
+
+
+---
+
+# Excersises
 
 
