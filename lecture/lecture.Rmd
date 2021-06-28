@@ -40,16 +40,34 @@ style_mono_accent(
 )
 ```
 
-
 class: inverse, left, bottom
 # Hello!
 
 ---
+
 # Hi, I'm Robin
 
-<!-- ... -->
+.left-column[
+Website: https://www.robinlovelace.net/
+
+Twitter: [robinlovelace](https://twitter.com/robinlovelace)
+
+1. [I'm Associate Professor of Transport Data Science, University of Leeds](https://environment.leeds.ac.uk/transport/staff/953/dr-robin-lovelace)
+2. [I am a co-author of Geocomputation with R book](https://geocompr.github.io/)
+3. [I create R packages](https://github.com/robinlovelace) and publicly available web applications for evidence-based policies (see the Propensity to Cycle Tool at [www.pct.bike](https://www.pct.bike/) and the [ActDev](https://actdev.cyipt.bike/) project for recent examples)
+
+]
+
+--
+
+.right-column[
+
+![](https://user-images.githubusercontent.com/1825120/110671502-79afbc80-81c6-11eb-9dc5-52046b1d04c8.gif)
+
+]
 
 ---
+
 # Hi, I'm Jakub
 
 .pull-left[
