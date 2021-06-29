@@ -354,6 +354,8 @@ knitr::include_graphics("https://user-images.githubusercontent.com/1825120/12369
 
 # Sharing your computational workflow
 
+See [excalidraw.com/](https://excalidraw.com/) for collaborative drawing app
+
 ![](https://user-images.githubusercontent.com/1825120/123762809-0e940e00-d8bb-11eb-8dab-0e881299bbef.png)
 
 ---
