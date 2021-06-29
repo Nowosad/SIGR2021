@@ -47,7 +47,7 @@ class: inverse, left, bottom
 
 # Hi, I'm Robin
 
-.left-column[
+.pull-left[
 Website: https://www.robinlovelace.net/
 
 Twitter: [robinlovelace](https://twitter.com/robinlovelace)
@@ -60,7 +60,7 @@ Twitter: [robinlovelace](https://twitter.com/robinlovelace)
 
 --
 
-.right-column[
+.pull-right[
 
 ![](https://user-images.githubusercontent.com/1825120/110671502-79afbc80-81c6-11eb-9dc5-52046b1d04c8.gif)
 
@@ -260,7 +260,7 @@ knitr::include_graphics("figs/worlds_animate_without_antarctica2.gif")
 
 # What can you do with geographic data + R?
 
-.left-column[
+.lc[
 
 - Exploratory data analysis ([EDA](https://r4ds.had.co.nz/exploratory-data-analysis.html))
 - Output data in different formats (e.g. creating a .GeoTIFF or .shp file to share with others)
@@ -274,7 +274,7 @@ knitr::include_graphics("figs/worlds_animate_without_antarctica2.gif")
 
 --
 
-.right-column[
+.rc[
 
 ```{r, out.width="100%", echo=FALSE}
 knitr::include_graphics("https://user-images.githubusercontent.com/1825120/38543030-5794b6f0-3c9b-11e8-9da9-10ec1f3ea726.gif")
@@ -359,41 +359,35 @@ See [excalidraw.com/](https://excalidraw.com/) for collaborative drawing app
 ![](https://user-images.githubusercontent.com/1825120/123762809-0e940e00-d8bb-11eb-8dab-0e881299bbef.png)
 
 ---
-
 # Building your own packages and distributing code
 
-.left-column[
-
-#### Great way to share code is on GitHub
+.lc2[
+**Great way to share code is on GitHub**
 
 Register at [github.com](https://github.com)
 
-```{r}
-# icons::fontawesome(name = "github")
+```{r, out.width="20%", echo=FALSE}
+knitr::include_graphics("https://github.githubassets.com/images/modules/logos_page/Octocat.png")
 ```
 
-![](https://github.githubassets.com/images/modules/logos_page/Octocat.png)
-
-- Next step: reproducible README
+Next step: reproducible README
 
 ```{r, eval=FALSE}
 usethis::use_readme_rmd()
 ```
 
-#### Example packages
+**Example packages**
 
 - [stats19](https://docs.ropensci.org/stats19): data
 - [sabre](https://github.com/Nowosad/sabre): methods
 - [supercells](https://github.com/Nowosad/supercells): methods
 - [noise-phenomena](https://github.com/cboettig/noise-phenomena) academic paper
-
 ]
 
-.right-column[
-
-![](https://raw.githubusercontent.com/hadley/r-pkgs/master/images/cover.png
-)
-
+.rc2[
+```{r, out.width="80%", echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/hadley/r-pkgs/master/images/cover.png")
+```
 ]
 
 
@@ -500,7 +494,98 @@ knitr::include_graphics("figs/gis-logos.png")
 class: inverse, left, bottom
 # Vector data model
 
-<!-- ... -->
+---
+# Vector data model ecosystem of R
+
+.pull-left[
+- The **sf** package is the successor of the **sp** package based on the OGC standard Simple Features
+- Combines the functionality of three previous packages: **sp**, **rgeos** and **rgdal**
+- Most of the functions in this package start with a prefix `st_`
+- This package handles additional vector data types (e.g. polygon and multipolygon are two separate classes), allows for easier data processing, and support for spatial databases such as PostGIS
+- https://r-spatial.github.io/sf/ and https://github.com/rstudio/cheatsheets/blob/master/sf.pdf
+]
+
+.pull-right[
+- The **terra** package has its own vector data classes.
+]
+
+---
+# sf reading
+
+```{r 05-rspatial-classes-8 }
+file_path = system.file("shapes/world.gpkg", package = "spData")
+file_path
+# world = read_sf(file_path)
+```
+
+```{r 05-rspatial-classes-8b }
+library(sf)
+world = read_sf("/home/jn/R/x86_64-redhat-linux-gnu-library/4.0/spData/shapes/world.gpkg")
+world
+```
+
+
+---
+# sf reading
+
+```{r 05-rspatial-classes-9 }
+file_path_txt = system.file("misc/cycle_hire_xy.csv", package = "spData")
+cycle_hire_xy = read.csv(file_path_txt)
+cycle_hire_sf = st_as_sf(cycle_hire_xy, coords = c("X", "Y"))
+cycle_hire_sf
+```
+
+
+---
+# sf
+
+- Combines the functionality of three previous packages: **sp**, **rgeos** and **rgdal**
+- https://github.com/r-spatial/sf/wiki/Migrating
+- Conversion from `sf` to `sp`:
+
+```{r 05-rspatial-classes-2, echo=TRUE, message=FALSE}
+library(spData)
+library(sp)
+library(sf)
+world_sp = as(world, Class = "Spatial")
+# sp functions ...
+```
+
+- Conversion from `sp` to `sf`:
+
+```{r 05-rspatial-classes-3, echo=TRUE}
+world_sf = st_as_sf(world_sp)
+```
+
+
+---
+# sf
+
+- Most of the functions in this package start with a prefix `st_`
+
+```{r 05-rspatial-classes-4, echo=TRUE}
+# lsf.str("package:sf")
+ls("package:sf")
+```
+
+- TAB
+
+---
+# sf
+
+```{r 05-rspatial-classes-6 }
+library(spData)
+library(sf)
+
+world
+```
+
+---
+# sf
+
+```{r 05-rspatial-classes-7 }
+plot(world)
+```
 
 ---
 class: inverse, left, bottom
@@ -1182,15 +1267,6 @@ class: inverse, left, bottom
 # Coordinate reference systems
 
 ---
-class: clear
-
-## Understanding coordinate reference systems (CRSs)
-
-- To check if the data has CRS
-- To understand the data
-- To decide if reprojection is needed
-
----
 # Coordinates - numbers describing positions in space
 
 .pull-left[
@@ -1249,85 +1325,6 @@ tm_shape(polygon_sf) +
 - Geographic coordinate reference systems, GCRS - composed of an ellipsoid and a datum; units in degrees
 - Projected coordinate reference systems, PCRS - based on a GCRS and a projection
 
----
-# Coordinate reference system (CRS)
-
-- **Geographic coordinate reference systems** - identify any location on the Earth’s surface using two values - longitude and latitude
-- The surface of the Earth in geographic coordinate systems is represented by a spherical or ellipsoidal surface
-- There are two types of datum — geocentric and local
-
-```{r, purl=FALSE,echo=FALSE, fig.cap = "Source: http://desktop.arcgis.com/en/arcmap/10.3/guide-books/map-projections/datums.htm", out.width="65%"}
-knitr::include_graphics("figs/datum.gif")
-```
-
-
----
-# Why do we need projected coordinates?
-
-```{r, purl=FALSE,echo=FALSE, warning=FALSE}
-library(tmap)
-library(sf)
-world_gr = st_graticule(ndiscr = 9999,
-                                  lon = seq(-90, 90, 10),
-                                  lat = seq(-180, 180, 10))
-
-ortho_crs = st_crs("+proj=ortho")
-world_gr2 = st_transform(world_gr, crs = ortho_crs)
-tm1 = tm_shape(world_gr2) +
-  tm_lines() +
-  tm_layout(inner.margins = 0.05, 
-            frame = FALSE, 
-            outer.margins = 0)
-
-grid_sf = st_make_grid(world_gr2)
-tm2 = tm_shape(grid_sf) +
-  tm_polygons(alpha = 0) +
-  tm_layout(inner.margins = 0.05, 
-            frame = FALSE, 
-            outer.margins = 0)
-```
-
-
-.pull-left[
-**Geographic coordinates**
-```{r, purl=FALSE,echo=FALSE, warning=FALSE, fig.height=6, fig.width=6}
-tm1
-```
-]
-
-.pull-right[
-**Projected coordinates**
-```{r, purl=FALSE,echo=FALSE, warning=FALSE, fig.height=6, fig.width=6}
-tm2
-```
-]
-
----
-# Coordinate reference system (CRS)
-
-.lc[
-- **Projected coordinate reference systems**
-- Projected CRSs use Cartesian coordinates on an implicitly flat surface
-- Projected CRSs are based on a geographic CRS and rely on map projections to convert the three-dimensional surface of the Earth into x and y values
-- http://www.manifold.net/doc/mfd9/projections_tutorial.htm
-]
-
-.rc[
-```{r, purl=FALSE,echo=FALSE, fig.cap = "Source: https://giscommons.org/earth-and-map-preprocessing/", out.width="55%"}
-knitr::include_graphics("figs/projections.gif")
-```
-]
-
-
----
-# Coordinate reference system (CRS)
-
-- **Projected coordinate reference systems**
-- [Some properties of the Earth’s surface are distorted in this process, such as area, direction, distance, and shape](https://www.youtube.com/watch?v=kIID5FDi2JQ)
-
-```{r, purl=FALSE,echo=FALSE, fig.cap = "Source: https://ihatecoordinatesystems.com/", out.width="70%"}
-knitr::include_graphics("figs/mercator.png")
-```
 
 ---
 # How to describe CRS?
@@ -1396,10 +1393,6 @@ tm_shape(us_data2) +
 ```
 
 ---
-class: inverse, left, bottom
-# Getting CRS
-
----
 # Getting CRS - vector data
 
 ```{r}
@@ -1458,260 +1451,13 @@ st_crs(elev)
 ]
 ]
 
----
-class: clear
-
-## Reprojecting geographic data
-
-Used when we need:
-
-- to change projection of a vector or raster data
-- to unify projections of several spatial datasets
-
-## Setting CRS
-
-Used when we need:
-
-- to set CRS to the data for which metadata about CRS is missing
-- to change CRS in the data  for which metadata about CRS is incorrect
 
 ---
 class: inverse, left, bottom
-# Reprojecting vectors
+# Geocomputation
 
 ---
-# Reprojecting vectors
-
-```{r, message=FALSE}
-library(sf)
-zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"), quiet = TRUE)
-data(zion_points, package = "spDataLarge")
-```
-
-.pull-left[
-```{r, purl=FALSE,echo=FALSE, out.width="80%", purl=FALSE}
-library(tmap)
-tm_shape(zion) +
-  tm_grid() + 
-  tm_polygons() 
-```
-]
-
-.pull-right[
-```{r, purl=FALSE,echo=FALSE, out.width="80%"}
-library(tmap)
-tm_shape(zion_points) +
-  tm_grid() + 
-  tm_symbols()
-```
-]
-
----
-# Reprojecting vectors (good approach)
-
-```{r}
-zion_points2a = st_transform(zion_points,
-                             crs = "EPSG:26912")
-```
-
----
-# Reprojecting vectors (even better approach)
-
-```{r}
-zion_points3 = st_transform(zion_points, st_crs(zion))
-zion_points3
-```
-
----
-# Reprojecting vectors
-
-.pull-left[
-```{r, purl=FALSE,echo=FALSE}
-library(tmap)
-tm_shape(zion_points) +
-  tm_grid() + 
-  tm_symbols()
-```
-]
-
-.pull-right[
-```{r, purl=FALSE,echo=FALSE}
-library(tmap)
-tm_shape(zion_points3) +
-  tm_grid() + 
-  tm_symbols()
-```
-]
-
-<!-- mention lwgeom -->
-<!-- https://geocompr.robinlovelace.net/reproj-geo-data.html#modifying-map-projections -->
-
----
-class: inverse, left, bottom
-# Reprojecting rasters
-
----
-# Reprojecting rasters
-
-- Different than reprojecting vectors
-- Two separate spatial operations: 
-    - A vector reprojection of cell centroids to another CRS
-    - Computation of new pixel values through resampling
-
----
-# Reprojecting rasters (1)
-
-```{r}
-library(terra)
-cat_raster = rast(system.file("raster/nlcd2011.tif", package = "spDataLarge"))
-crs(cat_raster, describe = TRUE)
-```
-
-.pull-left[
-```{r}
-unique(cat_raster)
-```
-]
-
-.pull-right[
-```{r, purl=FALSE,echo=FALSE, message=FALSE, warning=FALSE}
-tm_shape(cat_raster) + 
-  tm_raster(drop.levels = TRUE)
-```
-]
-
----
-# Reprojecting rasters (1)
-
-```{r}
-wgs84 = "EPSG:4326"
-cat_raster_wgs84 = project(cat_raster, wgs84, method = "near")
-```
-
----
-# Reprojecting rasters (1)
-
-.pull-left[
-```{r, purl=FALSE,echo=FALSE, message=FALSE, warning=FALSE}
-tm_shape(cat_raster) + 
-  tm_grid() + 
-  tm_raster(drop.levels = TRUE)
-```
-]
-
-.pull-right[
-```{r, purl=FALSE,echo=FALSE, message=FALSE, warning=FALSE}
-cat_raster2 = stars::st_as_stars(cat_raster)
-cat_raster2 = droplevels(cat_raster2)
-tm_shape(cat_raster_wgs84) + 
-  tm_grid() + 
-  tm_raster(style = "cat", palette = attr(cat_raster2[[1]], "colors")) + 
-  tm_layout(legend.show = FALSE)
-```
-]
-
-
----
-# Reprojecting rasters (2)
-
-```{r}
-con_raster = rast(system.file("raster/srtm.tif", package = "spDataLarge"))
-crs(con_raster, describe = TRUE)
-```
-
-.pull-left[
-```{r}
-hist(con_raster)
-```
-]
-
-.pull-right[
-```{r, purl=FALSE,echo=FALSE}
-tm_shape(con_raster) + 
-  tm_grid() +
-  tm_raster(style = "cont",
-            legend.show = FALSE)
-```
-]
-
-
----
-# Reprojecting rasters (2)
-
-https://projectionwizard.org/
-
-```{r}
-equalarea = 'PROJCS["ProjWiz_Custom_Albers",
- GEOGCS["GCS_WGS_1984",
-  DATUM["D_WGS_1984",
-   SPHEROID["WGS_1984",6378137.0,298.257223563]],
-  PRIMEM["Greenwich",0.0],
-  UNIT["Degree",0.0174532925199433]],
- PROJECTION["Albers"],
- PARAMETER["False_Easting",0.0],
- PARAMETER["False_Northing",0.0],
- PARAMETER["Central_Meridian",-113.04],
- PARAMETER["Standard_Parallel_1",32.32],
- PARAMETER["Standard_Parallel_2",42.32],
- PARAMETER["Latitude_Of_Origin",37.32],
- UNIT["Meter",1.0]]'
-con_raster_ea = project(con_raster, equalarea, method = "bilinear")
-crs(con_raster_ea, describe = TRUE)
-```
-
-
----
-# Reprojecting rasters (2)
-
-.pull-left[
-```{r, purl=FALSE,echo=FALSE}
-tm_shape(con_raster) + 
-  tm_grid() + 
-  tm_raster(style = "cont") + 
-  tm_layout(legend.show = FALSE)
-```
-]
-
-.pull-right[
-```{r, purl=FALSE,echo=FALSE}
-tm_shape(con_raster_ea) + 
-  tm_grid() + 
-  tm_raster(style = "cont") + 
-  tm_layout(legend.show = FALSE)
-```
-]
-
-<!-- mention more methods! -->
-<!-- gdal -->
-
----
-class: inverse, left, bottom
-# Setting CRS
-
----
-# Setting CRS (vector)
-
-```{r}
-vector_filepath = system.file("vector/zion.gpkg", package = "spDataLarge")
-new_vector = read_sf(vector_filepath)
-st_crs(new_vector) # get CRS
-new_vector = st_set_crs(new_vector, "EPSG:4326") # set CRS
-```
-
----
-# Setting CRS (raster)
-
-```{r}
-raster_filepath = system.file("raster/srtm.tif", package = "spDataLarge")
-new_raster = rast(raster_filepath)
-crs(new_raster, describe = TRUE) # get CRS
-crs(new_raster) = "EPSG:6341" # set CRS
-```
-
-
----
-
-## What is Geocomputation?
+# What is Geocomputation?
 
 
 .pull-left[
@@ -1733,8 +1479,7 @@ knitr::include_graphics("http://www.ccg.leeds.ac.uk/people/s.openshaw/s.openshaw
 > At the turn of the 21st Century it was unrealistic to expect readers to be able to reproduce code examples, due to barriers preventing access to the necessary hardware, software and data
 
 ---
-
-## What's in the geocompr box?
+# What's in the geocompr box?
 
 .pull-left[
 
@@ -1760,7 +1505,7 @@ Applications
 ]
 
 .pull-right[
-```{r, echo=FALSE, message=FALSE, out.height="500"}
+```{r, echo=FALSE, message=FALSE, out.width="100%"}
 knitr::include_graphics("https://raw.githubusercontent.com/Robinlovelace/geocompr/master/images/frontcover.png")
 ```
 ]
@@ -1775,23 +1520,6 @@ class: inverse, left, bottom
 
 .pull-left[
 
-]
-
-.pull-right[
-## Contact:
-
-`#rspatial`
-
-`#geocompr`
-
-<!-- `r # icons::fontawesome("twitter")` #rspatial -->
-
-<!-- `r # icons::fontawesome("twitter")` #geocompr -->
-
-<!-- `r # icons::fontawesome("twitter")` jakub_nowosad -->
-
-<!-- `r # icons::fontawesome("twitter")` robinlovelace -->
-
 ## Resources:
 
 https://geocompr.github.io/
@@ -1799,5 +1527,22 @@ https://geocompr.github.io/
 https://nowosad.github.io
 
 https://www.robinlovelace.net/
+]
+
+.pull-right[
+## Contact:
+
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
+` #rspatial
+
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
+` #geocompr
+
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
+` jakub_nowosad
+
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
+` robinlovelace
+
 
 ]
