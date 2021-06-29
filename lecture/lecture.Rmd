@@ -5,6 +5,7 @@ author: "Robin Lovelace & Jakub Nowosad"
 date: ""
 output:
   xaringan::moon_reader:
+    seal: false
     lib_dir: libs
     css: ["xaringan-themer.css", "style.css"]
     nature:
@@ -14,6 +15,29 @@ output:
       ratio: 16:9
       titleSlideClass: [left, bottom, inverse]
 ---
+
+class: inverse, left, nonum, clear
+background-image: url("figs/oleron.jpg")
+background-size: cover
+
+.titlestyle1[GIS and mapping] 
+<br>
+.titlestyle[A lecture on]
+<br>
+.titlestyle[on the GIS]
+<br>
+.titlestyle[and]
+<br>
+.titlestyle[mapping ecosystem of R]
+
+
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lora" />
+
+<br><br><br><br>
+
+.captionstyle[Robin Lovelace & Jakub Nowosad]
+
+.captionstyle[2021-06-29, SIGR2021, Oleron]
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -40,6 +64,7 @@ style_mono_accent(
 )
 ```
 
+---
 class: inverse, left, bottom
 # Hello!
 
@@ -1468,7 +1493,7 @@ class: inverse, left, bottom
 
 .pull-right[
 ```{r, echo=FALSE, message=FALSE}
-knitr::include_graphics("http://www.ccg.leeds.ac.uk/people/s.openshaw/s.openshaw.png")
+knitr::include_graphics("figs/s.openshaw.png")
 ```
 ]
 

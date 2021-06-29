@@ -11,6 +11,35 @@
   margin: 0;
 }
 
+.titlestyle1 { 
+  font-family: Lora; 
+  font-size: 65px;
+  font-style: normal;
+  color: white;
+  font-variant: normal; 
+  font-weight: 700; 
+  line-height: 90px; 
+  background-color:black;
+}
+
+
+.titlestyle { 
+  font-family: Lora; 
+  font-size: 45px;
+  font-style: normal;
+  color: white;
+  font-variant: normal; 
+  font-weight: 700; 
+  line-height: 60px; 
+  background-color:black;
+}
+
+.captionstyle {
+  color:white;
+  background-color:black;
+  font-weight:bold
+}
+
 .tiny .remark-code { /*Change made here*/
   font-size: 70% !important;
 }
