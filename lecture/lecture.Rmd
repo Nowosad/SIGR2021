@@ -150,15 +150,11 @@ library(spData)
 plot(world)
 ```
 
-![](https://i.imgur.com/56rm5Ni.png)
+![](https://geocompr.robinlovelace.net/02-spatial-data_files/figure-html/world-all-1.png)
 
 <sup>Created on 2021-06-29 by the [reprex package](https://reprex.tidyverse.org) (v2.0.0)</sup>
 
 ]
-
-
-
-
 
 ---
 class: inverse, left, bottom
@@ -353,6 +349,12 @@ knitr::include_graphics("https://user-images.githubusercontent.com/1825120/12369
 ![](https://user-images.githubusercontent.com/1825120/123700406-56ce1480-d858-11eb-8d6b-961c61d94390.png)
 
 ]
+
+---
+
+# Sharing your computational workflow
+
+![](https://user-images.githubusercontent.com/1825120/123762809-0e940e00-d8bb-11eb-8dab-0e881299bbef.png)
 
 ---
 
