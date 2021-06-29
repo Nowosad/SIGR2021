@@ -98,7 +98,8 @@ knitr::include_graphics("figs/logo-sabre.png")
 ## During the course
 
 - GitHub for any technical questions + sharing code https://github.com/Nowosad/SIGR2021
-- In the chat 
+- In the chat on [Slack](https://join.slack.com/t/geocomprworkspace/shared_invite/zt-sc7tqriq-9Q2rkveZwqCAQoBS3yqZNQ) (sign-in)
+- Feel free to post code here: https://rustpad.io/#uFuBVH (no sign-in)
 - In person
 
 ]
@@ -108,16 +109,56 @@ knitr::include_graphics("figs/logo-sabre.png")
 ## After the course
 
 - StackOverflow, general questions, quick answers
+- RStudio Community (R questions)
+- GIS StackExchange (for geographic data/software)
+- R-SIG-Geo email list (R-spatial questions)
 
 ]
 
 --
+
+.pull-left[
+
 
 Creating a reproducible example with reprex:
 
 1. Find or write some code to test (e.g. `plot(spData::world)`)
 2. Copy it (`Clt+C`)
 3. Create a reproducible example with `reprex::reprex()`
+
+``` r
+library(spData)
+plot(world)
+#> Error in data.matrix(x): 'list' object cannot be coerced to type 'double'
+```
+
+<sup>Created on 2021-06-29 by the [reprex package](https://reprex.tidyverse.org) (v2.0.0)</sup>
+
+]
+
+.pull-right[
+
+```{r, eval=FALSE, echo=FALSE}
+library(sf)
+library(spData)
+plot(world)
+```
+
+``` r
+library(sf)
+library(spData)
+plot(world)
+```
+
+![](https://i.imgur.com/56rm5Ni.png)
+
+<sup>Created on 2021-06-29 by the [reprex package](https://reprex.tidyverse.org) (v2.0.0)</sup>
+
+]
+
+
+
+
 
 ---
 class: inverse, left, bottom
@@ -319,7 +360,15 @@ knitr::include_graphics("https://user-images.githubusercontent.com/1825120/12369
 
 .left-column[
 
-### Great way to share code is on GitHub
+#### Great way to share code is on GitHub
+
+Register at [github.com](https://github.com)
+
+```{r}
+# icons::fontawesome(name = "github")
+```
+
+![](https://github.githubassets.com/images/modules/logos_page/Octocat.png)
 
 - Next step: reproducible README
 
