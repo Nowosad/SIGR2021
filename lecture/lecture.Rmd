@@ -543,7 +543,8 @@ file_path
 # world = read_sf(file_path)
 ```
 
-```{r 05-rspatial-classes-8b }
+```{r 05-rspatial-classes-8b, eval=FALSE}
+# Bad: not reproducible
 library(sf)
 world = read_sf("/home/jn/R/x86_64-redhat-linux-gnu-library/4.0/spData/shapes/world.gpkg")
 world
@@ -554,6 +555,7 @@ world
 # sf reading
 
 ```{r 05-rspatial-classes-9 }
+library(sf)
 file_path_txt = system.file("misc/cycle_hire_xy.csv", package = "spData")
 cycle_hire_xy = read.csv(file_path_txt)
 cycle_hire_sf = st_as_sf(cycle_hire_xy, coords = c("X", "Y"))

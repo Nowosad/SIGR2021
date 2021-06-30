@@ -35,6 +35,7 @@ output:
 
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
 ```
 
 # Getting and downloading data
@@ -43,20 +44,20 @@ options(htmltools.dir.version = FALSE)
 
 ## Schedule
 
-14:00 - 14:05 Set-up and overview
+09:00 - 09:05 Set-up and overview
 
-14:05 - 14:20 Demonstration of getting data 
+09:05 - 09:20 Demonstration of getting data 
 <!-- (I do) -->
 
-14:20 - 14:35 Getting started with getting and exploring data from New Zealand
+09:20 - 09:35 Getting started with getting and exploring data from New Zealand
 <!-- (we do) -->
 
-14:35 - 14:55 Working through the questions
+09:35 - 09:55 Working through the questions
 <!-- you do -->
 
-14:55 - 15:00 Break and preparation for visualisation section
+09:55 - 10:00 Break and preparation for visualisation section
 
-15:00 - 16:00 Data visualisation workshop
+10:00 - 11:00 Data visualisation workshop
 
 ]
 
@@ -124,7 +125,6 @@ library(osmextract)
 # Check the package website, https://docs.ropensci.org/osmextract/, for more details.
 ```
 
-
 ]
 
 ---
@@ -159,13 +159,13 @@ class(spData::nz)
 
 --
 
-## Documenting datasets
+### Documenting datasets
 
 See https://a-b-street.github.io/abstr/reference/montlake_buildings.html
 
 --
 
-## Exercise
+### Exercise
 
 Take a look at the help for `datasets` and plot two examples.
 
@@ -176,8 +176,6 @@ Take a look at the help for `datasets` and plot two examples.
 ```{r, eval=FALSE}
 ?AirPassengers
 ```
-
-
 
 ```{r}
 AirPassengers
@@ -194,39 +192,240 @@ plot(UKDriverDeaths)
 plot(CO2)
 ```
 
-```{r}
-```
+<!-- --- -->
+
+<!-- # Joining non-geographic data to geometries -->
+
+<!-- Idea: create animation from the WorldPhones dataset -->
 
 ---
-
-# Joining non-geographic data to geometries
-
-Idea: create animation from the WorldPhones dataset
-
----
-
 
 # Getting data from New Zealand I
 
+.pull-left[
+
+```{r}
+library(spData)
+plot(nz)
+```
+
+]
+
+.pull-right[
+
+```{r}
+plot(nz$geom)
+plot(nz_height, add = TRUE)
+```
+
+]
 
 ---
 
 # Getting data from New Zealand II
+
+.pull-left[
+
+
+```{r}
+library(nzelect)
+# ?voting_places
+nz_lonlat = sf::st_transform(nz, 4326)
+names(voting_places)
+voting_places_sf = sf::st_as_sf(voting_places, coords = c("longitude", "latitude"))
+```
+
+]
+
+.pull-right[
+
+```{r}
+plot(sf::st_geometry(nz_lonlat))
+plot(voting_places_sf, add = TRUE)
+```
+
+]
+
+---
+
+# Exercise
+
+.left-column[
+
+### Read the documentation on the site https://github.com/ellisp/nzelect 
+
+### Install the nzcensus package and use it to plot nz boundaries
+
+]
+
+.right-column[
+
+![](https://raw.githubusercontent.com/ellisp/nzelect/master/figure/unnamed-chunk-10-1.png)
+]
+
+---
+
+# Getting data from New Zealand III
+
+```{r}
+library(osmdata)
+```
+
+```{r, eval=FALSE}
+schools_nz_osm = opq(bbox = sf::st_bbox(nz_lonlat)) %>% 
+  add_osm_feature(key = "amenity", value = "school") %>% 
+  osmdata_sf()
+```
+
+```{r, echo=FALSE}
+# saveRDS(schools_nz_osm, "workshop1/schools_nz_osm.Rds")
+f = "schools_nz_osm.Rds"
+f = ifelse(file.exists(f), yes = f, no = "workshop1/schools_nz_osm.Rds")
+schools_nz_osm = readRDS(f)
+```
+
+
+```{r}
+schools_nz_osm
+schools_nz_polygons = schools_nz_osm$osm_polygons
+```
+
+---
+
+# Working with messy data
+
+```{r}
+library(tidyverse)
+schools_nz_polygons %>% 
+  sf::st_drop_geometry() %>% 
+  skimr::skim_without_charts() %>% 
+  print(include_summary = FALSE)
+```
+
+---
+
+# Selecting variables of interest
+
+```{r}
+table(schools_nz_polygons$MOE.years)
+pryr::object_size(schools_nz_polygons)
+schools_nz_subset = schools_nz_polygons %>% 
+  select(osm_id, LINZ2OSM.dataset, MOE.years, name)
+pryr::object_size(schools_nz_subset)
+```
+
+---
+
+# Combining different types of spatial data
+
+```{r, eval=FALSE, echo=FALSE}
+osm_points = schools_nz_osm$osm_points
+osm_polygons = schools_nz_osm$osm_polygons
+```
+
+.pull-left[
+
+```{r}
+osm_combine = function(osm_points, osm_polygons) {
+  require(sf)
+  if(nrow(osm_polygons) > 0) { # deduplicate points
+    osm_points_in_polygons = osm_points[osm_polygons, ]
+    # mapview::mapview(osm_points_in_polygons)
+    osm_points_not_in_polygons = osm_points[!osm_points$osm_id %in% osm_points_in_polygons$osm_id,] 
+    osm_polygons_centroids = sf::st_centroid(osm_polygons) # convert polygons to points and join together
+    # setdiff(names(osm_points), names(osm_polygons_centroids))
+    names_in_both = intersect(names(osm_points), names(osm_polygons_centroids))
+    osm_points = rbind(osm_points_not_in_polygons[names_in_both], osm_polygons_centroids[names_in_both])
+  } 
+  osm_points
+}
+```
+
+]
+
+.pull-right[
+
+```{r}
+schools_combined = osm_combine(
+  osm_points = schools_nz_osm$osm_points,
+  osm_polygons = schools_nz_subset
+  )
+nrow(schools_combined) / nrow(schools_nz_subset)
+```
+
+]
+
+## Exercise
+
+Use the example code above to get and clean data representing all supermarkets in New Zealand
+
+---
+
+# Getting data from New Zealand IV
+
+```{r}
+library(osmextract)
+```
+
+
+```{r}
+place_name = "isle of wight"
+# place_name = "new zealand" # warning: downloads ~1/4 GB compressed OSM data!
+et = c("amenity")
+q_points = "SELECT * FROM points WHERE amenity IN ('school')"
+oe_school_points = oe_get(place_name, query = q_points, extra_tags = et)
+```
+
+---
+
+# National OSM datasets 
+
+```{r, eval=FALSE}
+mapview::mapview(oe_school_points)
+```
+
+
+![](https://user-images.githubusercontent.com/1825120/123915529-83794d80-d978-11eb-88e0-a01f6cdf12e9.png)
 
 
 ---
 
 # Filtering 
 
+```{r}
+library(tidyverse)
+nz_north = nz %>% 
+  filter(Island == "North")
+plot(nz$geom)
+plot(nz_north, add = TRUE, col = "red")
+```
 
 ---
 
 # Mutating
 
+```{r}
+nz_density = nz %>% 
+  mutate(Density = Population / Land_area)
+nz_density %>% 
+  select(Density) %>% 
+  plot()
+```
 
 ---
 
 # Geographic joins
+
+```{r}
+schools_nz_polygons_centroids = sf::st_centroid(schools_nz_polygons)
+ncol(schools_nz_polygons_centroids)
+schools_nz_polygons_joined = sf::st_join(
+  schools_nz_polygons_centroids,
+  nz_lonlat %>% select(Name)
+  )
+ncol(schools_nz_polygons_joined)
+
+```
 
 
 ---
@@ -234,8 +433,42 @@ Idea: create animation from the WorldPhones dataset
 # Geometric operations
 
 
+```{r, fig.show='hold', warning=FALSE}
+nz_simple = rmapshaper::ms_simplify(nz, keep = 0.02)
+nz_buffer = sf::st_buffer(sf::st_union(nz), dist = 22000)
+plot(sf::st_geometry(nz_simple))
+plot(sf::st_geometry(nz_buffer))
+plot(nz, add = TRUE)
+```
+
+---
+
+# Geometry exercises
+
+.left-column[
+
+See https://geocompr.robinlovelace.net/geometric-operations.html
+
+Attempt the exercises
+
+]
+
+
+.right-column[
+
+![](https://geocompr.robinlovelace.net/05-geometry-operations_files/figure-html/buffs-1.png)
+
+]
+
 ---
 
 # Excersises
 
+### Based on what you have learned in this workshop find and download data that interests you in an area of the world you are researching or are familiar with
+
+```{r}
+gzones = osmextract::geofabrik_zones
+gzones_france = gzones %>% filter(parent == "france")
+gzones_france$name
+```
 
