@@ -227,7 +227,8 @@ plot(nz_height, add = TRUE)
 .pull-left[
 
 
-```{r}
+```{r, echo = c(-1)}
+options(width = 50)
 library(nzelect)
 # ?voting_places
 nz_lonlat = sf::st_transform(nz, 4326)
