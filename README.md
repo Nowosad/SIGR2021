@@ -34,6 +34,9 @@ Location: <https://www.openstreetmap.org/#map=11/45.9115/-1.2737>
 [A workshop on GIS and mapping with R - part
 1](workshop1/workshop1_rl.html)
 
+[A workshop on GIS and mapping with R - part
+2](workshop1/workshop1_jn.html)
+
 ### Friday 2 morning - Image processing and all things raster - 3H
 
 [A workshop on image processing and raster analysis with R (raster,
