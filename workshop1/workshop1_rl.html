@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>GIS and mapping</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Robin Lovelace &amp; Jakub Nowosad" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, bottom, inverse, title-slide
+
+# GIS and mapping
+## A workshop on GIS and mapping with R
+### Robin Lovelace &amp; Jakub Nowosad
+
+---
+
+
+
+&lt;!-- Ideas:  --&gt;
+
+&lt;!-- - Exploring data structures based on NZ examples --&gt;
+
+
+&lt;!-- - Intro to vector data with nz --&gt;
+&lt;!--   - Non spatial operations --&gt;
+&lt;!--   - Spatial operations e.g. spatial subsetting --&gt;
+&lt;!--   - Questions from the book --&gt;
+
+&lt;!-- - Getting data into R: --&gt;
+&lt;!--   - Directly reading in from url --&gt;
+&lt;!--   - OSM data with osmdata and `osmextract` packages --&gt;
+
+
+&lt;!-- - Advanced: transport data based on the transport chapter --&gt;
+
+
+
+# Getting and downloading data
+
+.pull-left[
+
+## Schedule
+
+09:00 - 09:05 Set-up and overview
+
+09:05 - 09:20 Demonstration of getting data 
+&lt;!-- (I do) --&gt;
+
+09:20 - 09:35 Getting started with getting and exploring data from New Zealand
+&lt;!-- (we do) --&gt;
+
+09:35 - 09:55 Working through the questions
+&lt;!-- you do --&gt;
+
+09:55 - 10:00 Break and preparation for visualisation section
+
+10:00 - 11:00 Data visualisation workshop
+
+]
+
+--
+
+.pull-right[
+
+## Learning outcomes
+
+### Get data 'shipped' with packages
+
+### Get data from data provider packages
+
+### Get data from OSM
+
+### Get data from websites
+
+]
+
+---
+
+# Setup: Packages we'll be using
+
+.pull-left[
+
+- [spData](https://github.com/Nowosad/spData) contains example spatial datasets
+
+- [osmdata](https://github.com/ropensci/osmdata) gets small OpenStreetMap (OSM) datasets
+
+- [osmextract](https://github.com/ropensci/osmextract) gets large OSM datasets
+
+- [nzelect](https://github.com/ellisp/nzelect) gets official voting data from New Zealand
+
+&lt;img src="https://docs.ropensci.org/osmextract/reference/figures/logo.svg" width="50%" /&gt;&lt;img src="https://raw.githubusercontent.com/ropensci/osmdata/main/man/figures/osmhex.png" width="50%" /&gt;
+
+
+
+]
+
+.pull-right[
+
+
+```r
+# Install packages
+# install.packages("remotes") # you'll need the remotes package
+pkgs = c(
+  "spData",
+  "osmdata",
+  "osmextract",
+  "nzelect"
+)
+```
+
+
+```r
+remotes::install_cran(pkgs)
+```
+
+
+```r
+library(osmextract)
+# Data (c) OpenStreetMap contributors, ODbL 1.0. https://www.openstreetmap.org/copyright.
+# Check the package website, https://docs.ropensci.org/osmextract/, for more details.
+```
+
+]
+
+---
+
+# Getting data that 'ship' with packages
+
+.left-column[
+
+## Why use example datasets?
+
+- Reproducibility
+
+- Avoid sharing sensitive data
+
+&lt;!-- - Speed of execution --&gt;
+
+&lt;!-- Documentation --&gt;
+
+- Any other reasons?
+
+&lt;!-- Encourages generalisation of code to work with multiple datasetsm --&gt;
+
+]
+
+
+```r
+# ?datasets
+# library(help = "datasets") # lots of great example datasets, use them!
+world_phones_new = datasets::WorldPhones
+class(world_phones_new)
+```
+
+```
+## [1] "matrix" "array"
+```
+
+```r
+class(spData::nz)
+```
+
+```
+## [1] "sf"         "data.frame"
+```
+
+--
+
+### Documenting datasets
+
+See https://a-b-street.github.io/abstr/reference/montlake_buildings.html
+
+--
+
+### Exercise
+
+Take a look at the help for `datasets` and plot two examples.
+
+---
+
+# Plotting air passengers
+
+
+```r
+?AirPassengers
+```
+
+
+```r
+AirPassengers
+```
+
+```
+##      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+## 1949 112 118 132 129 121 135 148 148 136 119 104 118
+## 1950 115 126 141 135 125 149 170 170 158 133 114 140
+## 1951 145 150 178 163 172 178 199 199 184 162 146 166
+## 1952 171 180 193 181 183 218 230 242 209 191 172 194
+## 1953 196 196 236 235 229 243 264 272 237 211 180 201
+## 1954 204 188 235 227 234 264 302 293 259 229 203 229
+## 1955 242 233 267 269 270 315 364 347 312 274 237 278
+## 1956 284 277 317 313 318 374 413 405 355 306 271 306
+## 1957 315 301 356 348 355 422 465 467 404 347 305 336
+## 1958 340 318 362 348 363 435 491 505 404 359 310 337
+## 1959 360 342 406 396 420 472 548 559 463 407 362 405
+## 1960 417 391 419 461 472 535 622 606 508 461 390 432
+```
+
+```r
+class(AirPassengers)
+```
+
+```
+## [1] "ts"
+```
+
+```r
+plot(AirPassengers)
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+---
+
+# A couple of other datasets
+
+
+```r
+plot(UKDriverDeaths)
+plot(CO2)
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-8-1.png)![](workshop1_rl_files/figure-html/unnamed-chunk-8-2.png)
+
+&lt;!-- --- --&gt;
+
+&lt;!-- # Joining non-geographic data to geometries --&gt;
+
+&lt;!-- Idea: create animation from the WorldPhones dataset --&gt;
+
+---
+
+# Getting data from New Zealand I
+
+.pull-left[
+
+
+```r
+library(spData)
+plot(nz)
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+]
+
+.pull-right[
+
+
+```r
+plot(nz$geom)
+plot(nz_height, add = TRUE)
+```
+
+```
+## Warning in plot.sf(nz_height, add = TRUE): ignoring all but the first attribute
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+]
+
+---
+
+# Getting data from New Zealand II
+
+.pull-left[
+
+
+
+```r
+library(nzelect)
+# ?voting_places
+nz_lonlat = sf::st_transform(nz, 4326)
+names(voting_places)
+```
+
+```
+##  [1] "electorate_number"   "electorate"          "voting_place_id"     "voting_place_suburb" "northing"           
+##  [6] "easting"             "longitude"           "latitude"            "voting_place"        "election_year"      
+## [11] "coordinate_system"   "TA2014_NAM"          "REGC2014_N"          "AU2014"              "MB2014"
+```
+
+```r
+voting_places_sf = sf::st_as_sf(voting_places, coords = c("longitude", "latitude"))
+```
+
+]
+
+.pull-right[
+
+
+```r
+plot(sf::st_geometry(nz_lonlat))
+plot(voting_places_sf, add = TRUE)
+```
+
+```
+## Warning in plot.sf(voting_places_sf, add = TRUE): ignoring all but the first attribute
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+]
+
+---
+
+# Exercise
+
+.left-column[
+
+### Read the documentation on the site https://github.com/ellisp/nzelect 
+
+### Install the nzcensus package and use it to plot nz boundaries
+
+]
+
+.right-column[
+
+![](https://raw.githubusercontent.com/ellisp/nzelect/master/figure/unnamed-chunk-10-1.png)
+]
+
+---
+
+# Getting data from New Zealand III
+
+
+```r
+library(osmdata)
+```
+
+
+```r
+schools_nz_osm = opq(bbox = sf::st_bbox(nz_lonlat)) %&gt;% 
+  add_osm_feature(key = "amenity", value = "school") %&gt;% 
+  osmdata_sf()
+```
+
+
+
+
+
+```r
+schools_nz_osm
+```
+
+```
+## Object of class 'osmdata' with:
+##                  $bbox : -47.2828524160058,166.426302914574,-34.4145187168353,178.550373601283
+##         $overpass_call : The call submitted to the overpass API
+##                  $meta : metadata including timestamp and version numbers
+##            $osm_points : 'sf' Simple Features Collection with 28532 points
+##             $osm_lines : 'sf' Simple Features Collection with 21 linestrings
+##          $osm_polygons : 'sf' Simple Features Collection with 2532 polygons
+##        $osm_multilines : NULL
+##     $osm_multipolygons : 'sf' Simple Features Collection with 15 multipolygons
+```
+
+```r
+schools_nz_polygons = schools_nz_osm$osm_polygons
+```
+
+---
+
+# Working with messy data
+
+
+```r
+library(tidyverse)
+schools_nz_polygons %&gt;% 
+  sf::st_drop_geometry() %&gt;% 
+  skimr::skim_without_charts() %&gt;% 
+  print(include_summary = FALSE)
+```
+
+```
+## 
+## ── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────
+##    skim_variable           n_missing complete_rate   min   max empty n_unique whitespace
+##  1 osm_id                          0      1            7     9     0     2532          0
+##  2 name                          126      0.950        4    68     0     2300          0
+##  3 FIXME                        2531      0.000395    29    29     0        1          0
+##  4 LINZ2OSM.dataset             2525      0.00276     16    16     0        1          0
+##  5 LINZ2OSM.layer               2525      0.00276     12    12     0        1          0
+##  6 LINZ2OSM.source_version      2525      0.00276     10    10     0        1          0
+##  7 MOE.authority                 261      0.897        5    12     0        4          0
+##  8 MOE.decile                   2481      0.0201       1     2     0       10          0
+##  9 MOE.definition               2530      0.000790    27    27     0        1          0
+## 10 MOE.gender                    264      0.896        4    28     0        6          0
+## 11 MOE.id                        247      0.902        1    29     0     2245          0
+## 12 MOE.years                     264      0.896        3     7     0       24          0
+## 13 accessibility                2531      0.000395     3     3     0        1          0
+## 14 addr.city                    1161      0.541        4    25     0      294          0
+## 15 addr.country                 2529      0.00118      2     2     0        1          0
+## 16 addr.hamlet                  2411      0.0478       4    17     0      117          0
+## 17 addr.housename               2514      0.00711      1    15     0       17          0
+## 18 addr.housenumber             1026      0.595        1     7     0      524          0
+## 19 addr.postcode                1118      0.558        4     4     0      555          0
+## 20 addr.street                   480      0.810        6    30     0     1664          0
+## 21 addr.suburb                  2304      0.0900       4    20     0      183          0
+## 22 alt_name                     2517      0.00592      9    35     0       15          0
+## 23 amenity                        25      0.990        6     6     0        1          0
+## 24 area                         2531      0.000395     3     3     0        1          0
+## 25 attribution                  2523      0.00355      4   108     0        3          0
+## 26 barrier                      2527      0.00197      5     5     0        1          0
+## 27 building                     2518      0.00553      3     6     0        2          0
+## 28 building.levels              2531      0.000395     1     1     0        1          0
+## 29 building.material            2531      0.000395     4     4     0        1          0
+## 30 campus                       2529      0.00118      5     6     0        3          0
+## 31 capacity                     2531      0.000395     3     3     0        1          0
+## 32 check_date                   2531      0.000395    10    10     0        1          0
+## 33 chimney                      2531      0.000395     2     2     0        1          0
+## 34 contact.facebook             2531      0.000395    72    72     0        1          0
+## 35 contact.phone                2531      0.000395    11    11     0        1          0
+## 36 date                         2531      0.000395     8     8     0        1          0
+## 37 denomination                 2248      0.112        8    21     0       10          0
+## 38 description                  2531      0.000395    39    39     0        1          0
+## 39 disused                      2531      0.000395     6     6     0        1          0
+## 40 disused.amenity              2531      0.000395     6     6     0        1          0
+## 41 email                        2489      0.0170      15    40     0       43          0
+## 42 fax                          2530      0.000790    14    14     0        2          0
+## 43 fixme                        2530      0.000790   118   188     0        2          0
+## 44 gender                       2526      0.00237      4     6     0        2          0
+## 45 grades                       2268      0.104        3     4     0        8          0
+## 46 isced.level                  2531      0.000395     1     1     0        1          0
+## 47 landuse                      2527      0.00197      9    11     0        2          0
+## 48 language.mi                  2530      0.000790     4     4     0        1          0
+## 49 leisure                      2529      0.00118      4    13     0        3          0
+## 50 linz2osm.objectid            2525      0.00276      7     7     0        7          0
+## 51 name.en                      2526      0.00237     16    28     0        6          0
+## 52 name.ja                      2528      0.00158      6    10     0        4          0
+## 53 name.mi                      2522      0.00395     10    25     0       10          0
+## 54 name.mk                      2530      0.000790    17    21     0        2          0
+## 55 note                         2508      0.00948      6    99     0       13          0
+## 56 occupied                     2531      0.000395     3     3     0        1          0
+## 57 official_name                2530      0.000790    27    45     0        2          0
+## 58 old_name                     2511      0.00829     14    32     0       21          0
+## 59 opening_date                 2531      0.000395     4     4     0        1          0
+## 60 opening_hours                2529      0.00118     17    49     0        3          0
+## 61 operator                     2521      0.00434     13    37     0       11          0
+## 62 operator.type                2529      0.00118      6    10     0        3          0
+## 63 owner                        2531      0.000395    31    31     0        1          0
+## 64 parking                      2531      0.000395    10    10     0        1          0
+## 65 phone                         979      0.613       10    17     0     1543          0
+## 66 ref.linz.address_id          2199      0.132        5    46     0      333          0
+## 67 religion                     2201      0.131        4     9     0        4          0
+## 68 roof_pitch                   2531      0.000395     6     6     0        1          0
+## 69 short_name                   2531      0.000395    21    21     0        1          0
+## 70 source                       2513      0.00750      3    25     0        8          0
+## 71 source.geometry              2531      0.000395     4     4     0        1          0
+## 72 source_ref                   2531      0.000395    45    45     0        1          0
+## 73 sport                        2530      0.000790     5     8     0        2          0
+## 74 start_date                   2489      0.0170       4    10     0       24          0
+## 75 surface                      2530      0.000790     5     5     0        2          0
+## 76 website                       441      0.826       19    74     0     2073          0
+## 77 wheelchair                   2523      0.00355      3     7     0        2          0
+## 78 wikidata                      343      0.865        7    10     0     2186          0
+## 79 wikipedia                    2314      0.0861      13    48     0      211          0
+## 80 wikipedia.en                 2528      0.00158     16    28     0        4          0
+```
+
+---
+
+# Selecting variables of interest
+
+
+```r
+table(schools_nz_polygons$MOE.years)
+```
+
+```
+## 
+##    1-10    1-13    1-15     1-5     1-6  1-6\\8     1-8   11-13   12-13    3-13     3-8    4-13     5-8    6-10 
+##       2     108       2       1     713       1     955       4       1      13       1       1       1       1 
+##    7-10    7-11    7-13     7-8     7-9    9-11    9-12    9-13    9-15 special 
+##       7       1      97     115       1       1       1     217       2      22
+```
+
+```r
+pryr::object_size(schools_nz_polygons)
+```
+
+```
+## 6.92 MB
+```
+
+```r
+schools_nz_subset = schools_nz_polygons %&gt;% 
+  select(osm_id, LINZ2OSM.dataset, MOE.years, name)
+pryr::object_size(schools_nz_subset)
+```
+
+```
+## 4.59 MB
+```
+
+---
+
+# Combining different types of spatial data
+
+
+
+.pull-left[
+
+
+```r
+osm_combine = function(osm_points, osm_polygons) {
+  require(sf)
+  if(nrow(osm_polygons) &gt; 0) { # deduplicate points
+    osm_points_in_polygons = osm_points[osm_polygons, ]
+    # mapview::mapview(osm_points_in_polygons)
+    osm_points_not_in_polygons = osm_points[!osm_points$osm_id %in% osm_points_in_polygons$osm_id,] 
+    osm_polygons_centroids = sf::st_centroid(osm_polygons) # convert polygons to points and join together
+    # setdiff(names(osm_points), names(osm_polygons_centroids))
+    names_in_both = intersect(names(osm_points), names(osm_polygons_centroids))
+    osm_points = rbind(osm_points_not_in_polygons[names_in_both], osm_polygons_centroids[names_in_both])
+  } 
+  osm_points
+}
+```
+
+]
+
+.pull-right[
+
+
+```r
+schools_combined = osm_combine(
+  osm_points = schools_nz_osm$osm_points,
+  osm_polygons = schools_nz_subset
+  )
+```
+
+```
+## Warning in st_centroid.sf(osm_polygons): st_centroid assumes attributes are constant over geometries of x
+```
+
+```r
+nrow(schools_combined) / nrow(schools_nz_subset)
+```
+
+```
+## [1] 1.078594
+```
+
+]
+
+## Exercise
+
+Use the example code above to get and clean data representing all supermarkets in New Zealand
+
+---
+
+# Getting data from New Zealand IV
+
+
+```r
+library(osmextract)
+```
+
+
+
+```r
+place_name = "isle of wight"
+# place_name = "new zealand" # warning: downloads ~1/4 GB compressed OSM data!
+et = c("amenity")
+q_points = "SELECT * FROM points WHERE amenity IN ('school')"
+oe_school_points = oe_get(place_name, query = q_points, extra_tags = et)
+```
+
+```
+## The input place was matched with: Isle of Wight
+```
+
+```
+## Warning: The query selected a layer which is different from layer argument. We
+## will replace the layer argument.
+```
+
+```
+## The chosen file was already detected in the download directory. Skip downloading.
+```
+
+```
+## The corresponding gpkg file was already detected. Skip vectortranslate operations.
+```
+
+```
+## Reading layer `points' from data source 
+##   `/mnt/57982e2a-2874-4246-a6fe-115c199bc6bd/data/osm/geofabrik_isle-of-wight-latest.gpkg' 
+##   using driver `GPKG'
+## Simple feature collection with 5 features and 11 fields
+## Geometry type: POINT
+## Dimension:     XY
+## Bounding box:  xmin: -1.304616 ymin: 50.69791 xmax: -1.167812 ymax: 50.7524
+## Geodetic CRS:  WGS 84
+```
+
+---
+
+# National OSM datasets 
+
+
+```r
+mapview::mapview(oe_school_points)
+```
+
+
+![](https://user-images.githubusercontent.com/1825120/123915529-83794d80-d978-11eb-88e0-a01f6cdf12e9.png)
+
+
+---
+
+# Filtering 
+
+
+```r
+library(tidyverse)
+nz_north = nz %&gt;% 
+  filter(Island == "North")
+plot(nz$geom)
+plot(nz_north, add = TRUE, col = "red")
+```
+
+```
+## Warning in plot.sf(nz_north, add = TRUE, col = "red"): ignoring all but the
+## first attribute
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+
+---
+
+# Mutating
+
+
+```r
+nz_density = nz %&gt;% 
+  mutate(Density = Population / Land_area)
+nz_density %&gt;% 
+  select(Density) %&gt;% 
+  plot()
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+
+---
+
+# Geographic joins
+
+
+```r
+schools_nz_polygons_centroids = sf::st_centroid(schools_nz_polygons)
+```
+
+```
+## Warning in st_centroid.sf(schools_nz_polygons): st_centroid assumes attributes
+## are constant over geometries of x
+```
+
+```r
+ncol(schools_nz_polygons_centroids)
+```
+
+```
+## [1] 81
+```
+
+```r
+schools_nz_polygons_joined = sf::st_join(
+  schools_nz_polygons_centroids,
+  nz_lonlat %&gt;% select(Name)
+  )
+ncol(schools_nz_polygons_joined)
+```
+
+```
+## [1] 82
+```
+
+
+---
+
+# Geometric operations
+
+
+
+```r
+nz_simple = rmapshaper::ms_simplify(nz, keep = 0.02)
+nz_buffer = sf::st_buffer(sf::st_union(nz), dist = 22000)
+plot(sf::st_geometry(nz_simple))
+plot(sf::st_geometry(nz_buffer))
+plot(nz, add = TRUE)
+```
+
+![](workshop1_rl_files/figure-html/unnamed-chunk-28-1.png)![](workshop1_rl_files/figure-html/unnamed-chunk-28-2.png)
+
+---
+
+# Geometry exercises
+
+.left-column[
+
+See https://geocompr.robinlovelace.net/geometric-operations.html
+
+Attempt the exercises
+
+]
+
+
+.right-column[
+
+![](https://geocompr.robinlovelace.net/05-geometry-operations_files/figure-html/buffs-1.png)
+
+]
+
+---
+
+# Excersises
+
+### Based on what you have learned in this workshop find and download data that interests you in an area of the world you are researching or are familiar with
+
+
+```r
+gzones = osmextract::geofabrik_zones
+gzones_france = gzones %&gt;% filter(parent == "france")
+gzones_france$name
+```
+
+```
+##  [1] "Alsace"                     "Aquitaine"                  "Auvergne"                  
+##  [4] "Basse-Normandie"            "Bourgogne"                  "Bretagne"                  
+##  [7] "Centre"                     "Champagne Ardenne"          "Corse"                     
+## [10] "Franche Comte"              "Guadeloupe"                 "Guyane"                    
+## [13] "Haute-Normandie"            "Ile-de-France"              "Languedoc-Roussillon"      
+## [16] "Limousin"                   "Lorraine"                   "Martinique"                
+## [19] "Mayotte"                    "Midi-Pyrenees"              "Nord-Pas-de-Calais"        
+## [22] "Pays de la Loire"           "Picardie"                   "Poitou-Charentes"          
+## [25] "Provence Alpes-Cote-d'Azur" "Reunion"                    "Rhone-Alpes"
+```
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
