@@ -1559,17 +1559,13 @@ https://www.robinlovelace.net/
 .pull-right[
 ## Contact:
 
-`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
-` #rspatial
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")` #rspatial
 
-`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
-` #geocompr
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")` #geocompr
 
-`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
-` jakub_nowosad
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")` jakub_nowosad
 
-`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")
-` robinlovelace
+`r tryCatch(icons::fontawesome("twitter"), error = function(e) "")` robinlovelace
 
 
 ]
