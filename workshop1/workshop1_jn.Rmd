@@ -1,6 +1,6 @@
 ---
 title: "GIS and mapping"
-subtitle: "A workshop on GIS and mapping with R: data visualisation"
+subtitle: "A workshop on GIS and mapping with R: part 2"
 author: "Jakub Nowosad & Robin Lovelace"
 date: ""
 output:

@@ -13,7 +13,7 @@
 class: left, bottom, inverse, title-slide
 
 # GIS and mapping
-## A workshop on GIS and mapping with R
+## A workshop on GIS and mapping with R: part 1
 ### Robin Lovelace &amp; Jakub Nowosad
 
 ---
@@ -315,7 +315,8 @@ plot(voting_places_sf, add = TRUE)
 ```
 
 ```
-## Warning in plot.sf(voting_places_sf, add = TRUE): ignoring all but the first attribute
+## Warning in plot.sf(voting_places_sf, add = TRUE):
+## ignoring all but the first attribute
 ```
 
 ![](workshop1_rl_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
@@ -394,88 +395,169 @@ schools_nz_polygons %&gt;%
 
 ```
 ## 
-## ── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────
-##    skim_variable           n_missing complete_rate   min   max empty n_unique whitespace
-##  1 osm_id                          0      1            7     9     0     2532          0
-##  2 name                          126      0.950        4    68     0     2300          0
-##  3 FIXME                        2531      0.000395    29    29     0        1          0
-##  4 LINZ2OSM.dataset             2525      0.00276     16    16     0        1          0
-##  5 LINZ2OSM.layer               2525      0.00276     12    12     0        1          0
-##  6 LINZ2OSM.source_version      2525      0.00276     10    10     0        1          0
-##  7 MOE.authority                 261      0.897        5    12     0        4          0
-##  8 MOE.decile                   2481      0.0201       1     2     0       10          0
-##  9 MOE.definition               2530      0.000790    27    27     0        1          0
-## 10 MOE.gender                    264      0.896        4    28     0        6          0
-## 11 MOE.id                        247      0.902        1    29     0     2245          0
-## 12 MOE.years                     264      0.896        3     7     0       24          0
-## 13 accessibility                2531      0.000395     3     3     0        1          0
-## 14 addr.city                    1161      0.541        4    25     0      294          0
-## 15 addr.country                 2529      0.00118      2     2     0        1          0
-## 16 addr.hamlet                  2411      0.0478       4    17     0      117          0
-## 17 addr.housename               2514      0.00711      1    15     0       17          0
-## 18 addr.housenumber             1026      0.595        1     7     0      524          0
-## 19 addr.postcode                1118      0.558        4     4     0      555          0
-## 20 addr.street                   480      0.810        6    30     0     1664          0
-## 21 addr.suburb                  2304      0.0900       4    20     0      183          0
-## 22 alt_name                     2517      0.00592      9    35     0       15          0
-## 23 amenity                        25      0.990        6     6     0        1          0
-## 24 area                         2531      0.000395     3     3     0        1          0
-## 25 attribution                  2523      0.00355      4   108     0        3          0
-## 26 barrier                      2527      0.00197      5     5     0        1          0
-## 27 building                     2518      0.00553      3     6     0        2          0
-## 28 building.levels              2531      0.000395     1     1     0        1          0
-## 29 building.material            2531      0.000395     4     4     0        1          0
-## 30 campus                       2529      0.00118      5     6     0        3          0
-## 31 capacity                     2531      0.000395     3     3     0        1          0
-## 32 check_date                   2531      0.000395    10    10     0        1          0
-## 33 chimney                      2531      0.000395     2     2     0        1          0
-## 34 contact.facebook             2531      0.000395    72    72     0        1          0
-## 35 contact.phone                2531      0.000395    11    11     0        1          0
-## 36 date                         2531      0.000395     8     8     0        1          0
-## 37 denomination                 2248      0.112        8    21     0       10          0
-## 38 description                  2531      0.000395    39    39     0        1          0
-## 39 disused                      2531      0.000395     6     6     0        1          0
-## 40 disused.amenity              2531      0.000395     6     6     0        1          0
-## 41 email                        2489      0.0170      15    40     0       43          0
-## 42 fax                          2530      0.000790    14    14     0        2          0
-## 43 fixme                        2530      0.000790   118   188     0        2          0
-## 44 gender                       2526      0.00237      4     6     0        2          0
-## 45 grades                       2268      0.104        3     4     0        8          0
-## 46 isced.level                  2531      0.000395     1     1     0        1          0
-## 47 landuse                      2527      0.00197      9    11     0        2          0
-## 48 language.mi                  2530      0.000790     4     4     0        1          0
-## 49 leisure                      2529      0.00118      4    13     0        3          0
-## 50 linz2osm.objectid            2525      0.00276      7     7     0        7          0
-## 51 name.en                      2526      0.00237     16    28     0        6          0
-## 52 name.ja                      2528      0.00158      6    10     0        4          0
-## 53 name.mi                      2522      0.00395     10    25     0       10          0
-## 54 name.mk                      2530      0.000790    17    21     0        2          0
-## 55 note                         2508      0.00948      6    99     0       13          0
-## 56 occupied                     2531      0.000395     3     3     0        1          0
-## 57 official_name                2530      0.000790    27    45     0        2          0
-## 58 old_name                     2511      0.00829     14    32     0       21          0
-## 59 opening_date                 2531      0.000395     4     4     0        1          0
-## 60 opening_hours                2529      0.00118     17    49     0        3          0
-## 61 operator                     2521      0.00434     13    37     0       11          0
-## 62 operator.type                2529      0.00118      6    10     0        3          0
-## 63 owner                        2531      0.000395    31    31     0        1          0
-## 64 parking                      2531      0.000395    10    10     0        1          0
-## 65 phone                         979      0.613       10    17     0     1543          0
-## 66 ref.linz.address_id          2199      0.132        5    46     0      333          0
-## 67 religion                     2201      0.131        4     9     0        4          0
-## 68 roof_pitch                   2531      0.000395     6     6     0        1          0
-## 69 short_name                   2531      0.000395    21    21     0        1          0
-## 70 source                       2513      0.00750      3    25     0        8          0
-## 71 source.geometry              2531      0.000395     4     4     0        1          0
-## 72 source_ref                   2531      0.000395    45    45     0        1          0
-## 73 sport                        2530      0.000790     5     8     0        2          0
-## 74 start_date                   2489      0.0170       4    10     0       24          0
-## 75 surface                      2530      0.000790     5     5     0        2          0
-## 76 website                       441      0.826       19    74     0     2073          0
-## 77 wheelchair                   2523      0.00355      3     7     0        2          0
-## 78 wikidata                      343      0.865        7    10     0     2186          0
-## 79 wikipedia                    2314      0.0861      13    48     0      211          0
-## 80 wikipedia.en                 2528      0.00158     16    28     0        4          0
+## ── Variable type: character ──────────────────────
+##    skim_variable           n_missing complete_rate
+##  1 osm_id                          0      1       
+##  2 name                          126      0.950   
+##  3 FIXME                        2531      0.000395
+##  4 LINZ2OSM.dataset             2525      0.00276 
+##  5 LINZ2OSM.layer               2525      0.00276 
+##  6 LINZ2OSM.source_version      2525      0.00276 
+##  7 MOE.authority                 261      0.897   
+##  8 MOE.decile                   2481      0.0201  
+##  9 MOE.definition               2530      0.000790
+## 10 MOE.gender                    264      0.896   
+## 11 MOE.id                        247      0.902   
+## 12 MOE.years                     264      0.896   
+## 13 accessibility                2531      0.000395
+## 14 addr.city                    1161      0.541   
+## 15 addr.country                 2529      0.00118 
+## 16 addr.hamlet                  2411      0.0478  
+## 17 addr.housename               2514      0.00711 
+## 18 addr.housenumber             1026      0.595   
+## 19 addr.postcode                1118      0.558   
+## 20 addr.street                   480      0.810   
+## 21 addr.suburb                  2304      0.0900  
+## 22 alt_name                     2517      0.00592 
+## 23 amenity                        25      0.990   
+## 24 area                         2531      0.000395
+## 25 attribution                  2523      0.00355 
+## 26 barrier                      2527      0.00197 
+## 27 building                     2518      0.00553 
+## 28 building.levels              2531      0.000395
+## 29 building.material            2531      0.000395
+## 30 campus                       2529      0.00118 
+## 31 capacity                     2531      0.000395
+## 32 check_date                   2531      0.000395
+## 33 chimney                      2531      0.000395
+## 34 contact.facebook             2531      0.000395
+## 35 contact.phone                2531      0.000395
+## 36 date                         2531      0.000395
+## 37 denomination                 2248      0.112   
+## 38 description                  2531      0.000395
+## 39 disused                      2531      0.000395
+## 40 disused.amenity              2531      0.000395
+## 41 email                        2489      0.0170  
+## 42 fax                          2530      0.000790
+## 43 fixme                        2530      0.000790
+## 44 gender                       2526      0.00237 
+## 45 grades                       2268      0.104   
+## 46 isced.level                  2531      0.000395
+## 47 landuse                      2527      0.00197 
+## 48 language.mi                  2530      0.000790
+## 49 leisure                      2529      0.00118 
+## 50 linz2osm.objectid            2525      0.00276 
+## 51 name.en                      2526      0.00237 
+## 52 name.ja                      2528      0.00158 
+## 53 name.mi                      2522      0.00395 
+## 54 name.mk                      2530      0.000790
+## 55 note                         2508      0.00948 
+## 56 occupied                     2531      0.000395
+## 57 official_name                2530      0.000790
+## 58 old_name                     2511      0.00829 
+## 59 opening_date                 2531      0.000395
+## 60 opening_hours                2529      0.00118 
+## 61 operator                     2521      0.00434 
+## 62 operator.type                2529      0.00118 
+## 63 owner                        2531      0.000395
+## 64 parking                      2531      0.000395
+## 65 phone                         979      0.613   
+## 66 ref.linz.address_id          2199      0.132   
+## 67 religion                     2201      0.131   
+## 68 roof_pitch                   2531      0.000395
+## 69 short_name                   2531      0.000395
+## 70 source                       2513      0.00750 
+## 71 source.geometry              2531      0.000395
+## 72 source_ref                   2531      0.000395
+## 73 sport                        2530      0.000790
+## 74 start_date                   2489      0.0170  
+## 75 surface                      2530      0.000790
+## 76 website                       441      0.826   
+## 77 wheelchair                   2523      0.00355 
+## 78 wikidata                      343      0.865   
+## 79 wikipedia                    2314      0.0861  
+## 80 wikipedia.en                 2528      0.00158 
+##      min   max empty n_unique whitespace
+##  1     7     9     0     2532          0
+##  2     4    68     0     2300          0
+##  3    29    29     0        1          0
+##  4    16    16     0        1          0
+##  5    12    12     0        1          0
+##  6    10    10     0        1          0
+##  7     5    12     0        4          0
+##  8     1     2     0       10          0
+##  9    27    27     0        1          0
+## 10     4    28     0        6          0
+## 11     1    29     0     2245          0
+## 12     3     7     0       24          0
+## 13     3     3     0        1          0
+## 14     4    25     0      294          0
+## 15     2     2     0        1          0
+## 16     4    17     0      117          0
+## 17     1    15     0       17          0
+## 18     1     7     0      524          0
+## 19     4     4     0      555          0
+## 20     6    30     0     1664          0
+## 21     4    20     0      183          0
+## 22     9    35     0       15          0
+## 23     6     6     0        1          0
+## 24     3     3     0        1          0
+## 25     4   108     0        3          0
+## 26     5     5     0        1          0
+## 27     3     6     0        2          0
+## 28     1     1     0        1          0
+## 29     4     4     0        1          0
+## 30     5     6     0        3          0
+## 31     3     3     0        1          0
+## 32    10    10     0        1          0
+## 33     2     2     0        1          0
+## 34    72    72     0        1          0
+## 35    11    11     0        1          0
+## 36     8     8     0        1          0
+## 37     8    21     0       10          0
+## 38    39    39     0        1          0
+## 39     6     6     0        1          0
+## 40     6     6     0        1          0
+## 41    15    40     0       43          0
+## 42    14    14     0        2          0
+## 43   118   188     0        2          0
+## 44     4     6     0        2          0
+## 45     3     4     0        8          0
+## 46     1     1     0        1          0
+## 47     9    11     0        2          0
+## 48     4     4     0        1          0
+## 49     4    13     0        3          0
+## 50     7     7     0        7          0
+## 51    16    28     0        6          0
+## 52     6    10     0        4          0
+## 53    10    25     0       10          0
+## 54    17    21     0        2          0
+## 55     6    99     0       13          0
+## 56     3     3     0        1          0
+## 57    27    45     0        2          0
+## 58    14    32     0       21          0
+## 59     4     4     0        1          0
+## 60    17    49     0        3          0
+## 61    13    37     0       11          0
+## 62     6    10     0        3          0
+## 63    31    31     0        1          0
+## 64    10    10     0        1          0
+## 65    10    17     0     1543          0
+## 66     5    46     0      333          0
+## 67     4     9     0        4          0
+## 68     6     6     0        1          0
+## 69    21    21     0        1          0
+## 70     3    25     0        8          0
+## 71     4     4     0        1          0
+## 72    45    45     0        1          0
+## 73     5     8     0        2          0
+## 74     4    10     0       24          0
+## 75     5     5     0        2          0
+## 76    19    74     0     2073          0
+## 77     3     7     0        2          0
+## 78     7    10     0     2186          0
+## 79    13    48     0      211          0
+## 80    16    28     0        4          0
 ```
 
 ---
@@ -489,10 +571,12 @@ table(schools_nz_polygons$MOE.years)
 
 ```
 ## 
-##    1-10    1-13    1-15     1-5     1-6  1-6\\8     1-8   11-13   12-13    3-13     3-8    4-13     5-8    6-10 
-##       2     108       2       1     713       1     955       4       1      13       1       1       1       1 
-##    7-10    7-11    7-13     7-8     7-9    9-11    9-12    9-13    9-15 special 
-##       7       1      97     115       1       1       1     217       2      22
+##    1-10    1-13    1-15     1-5     1-6  1-6\\8     1-8   11-13   12-13    3-13 
+##       2     108       2       1     713       1     955       4       1      13 
+##     3-8    4-13     5-8    6-10    7-10    7-11    7-13     7-8     7-9    9-11 
+##       1       1       1       1       7       1      97     115       1       1 
+##    9-12    9-13    9-15 special 
+##       1     217       2      22
 ```
 
 ```r
@@ -551,7 +635,9 @@ schools_combined = osm_combine(
 ```
 
 ```
-## Warning in st_centroid.sf(osm_polygons): st_centroid assumes attributes are constant over geometries of x
+## Warning in st_centroid.sf(osm_polygons):
+## st_centroid assumes attributes are constant over
+## geometries of x
 ```
 
 ```r
@@ -592,21 +678,30 @@ oe_school_points = oe_get(place_name, query = q_points, extra_tags = et)
 ```
 
 ```
-## Warning: The query selected a layer which is different from layer argument. We
-## will replace the layer argument.
+## Warning: The query selected a layer which is
+## different from layer argument. We will replace the
+## layer argument.
 ```
 
 ```
-## The chosen file was already detected in the download directory. Skip downloading.
+## File downloaded!
 ```
 
 ```
-## The corresponding gpkg file was already detected. Skip vectortranslate operations.
+## Start with the vectortranslate operations on the input file!
+```
+
+```
+## 0...10...20...30...40...50...60...70...80...90...100 - done.
+```
+
+```
+## Finished the vectortranslate operations on the input file!
 ```
 
 ```
 ## Reading layer `points' from data source 
-##   `/mnt/57982e2a-2874-4246-a6fe-115c199bc6bd/data/osm/geofabrik_isle-of-wight-latest.gpkg' 
+##   `/tmp/Rtmp1E7844/geofabrik_isle-of-wight-latest.gpkg' 
 ##   using driver `GPKG'
 ## Simple feature collection with 5 features and 11 fields
 ## Geometry type: POINT
@@ -642,8 +737,8 @@ plot(nz_north, add = TRUE, col = "red")
 ```
 
 ```
-## Warning in plot.sf(nz_north, add = TRUE, col = "red"): ignoring all but the
-## first attribute
+## Warning in plot.sf(nz_north, add = TRUE, col =
+## "red"): ignoring all but the first attribute
 ```
 
 ![](workshop1_rl_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
@@ -673,8 +768,9 @@ schools_nz_polygons_centroids = sf::st_centroid(schools_nz_polygons)
 ```
 
 ```
-## Warning in st_centroid.sf(schools_nz_polygons): st_centroid assumes attributes
-## are constant over geometries of x
+## Warning in st_centroid.sf(schools_nz_polygons):
+## st_centroid assumes attributes are constant over
+## geometries of x
 ```
 
 ```r
@@ -747,15 +843,33 @@ gzones_france$name
 ```
 
 ```
-##  [1] "Alsace"                     "Aquitaine"                  "Auvergne"                  
-##  [4] "Basse-Normandie"            "Bourgogne"                  "Bretagne"                  
-##  [7] "Centre"                     "Champagne Ardenne"          "Corse"                     
-## [10] "Franche Comte"              "Guadeloupe"                 "Guyane"                    
-## [13] "Haute-Normandie"            "Ile-de-France"              "Languedoc-Roussillon"      
-## [16] "Limousin"                   "Lorraine"                   "Martinique"                
-## [19] "Mayotte"                    "Midi-Pyrenees"              "Nord-Pas-de-Calais"        
-## [22] "Pays de la Loire"           "Picardie"                   "Poitou-Charentes"          
-## [25] "Provence Alpes-Cote-d'Azur" "Reunion"                    "Rhone-Alpes"
+##  [1] "Alsace"                    
+##  [2] "Aquitaine"                 
+##  [3] "Auvergne"                  
+##  [4] "Basse-Normandie"           
+##  [5] "Bourgogne"                 
+##  [6] "Bretagne"                  
+##  [7] "Centre"                    
+##  [8] "Champagne Ardenne"         
+##  [9] "Corse"                     
+## [10] "Franche Comte"             
+## [11] "Guadeloupe"                
+## [12] "Guyane"                    
+## [13] "Haute-Normandie"           
+## [14] "Ile-de-France"             
+## [15] "Languedoc-Roussillon"      
+## [16] "Limousin"                  
+## [17] "Lorraine"                  
+## [18] "Martinique"                
+## [19] "Mayotte"                   
+## [20] "Midi-Pyrenees"             
+## [21] "Nord-Pas-de-Calais"        
+## [22] "Pays de la Loire"          
+## [23] "Picardie"                  
+## [24] "Poitou-Charentes"          
+## [25] "Provence Alpes-Cote-d'Azur"
+## [26] "Reunion"                   
+## [27] "Rhone-Alpes"
 ```
 
     </textarea>

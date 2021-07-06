@@ -1,6 +1,6 @@
 ---
 title: "GIS and mapping"
-subtitle: "A workshop on GIS and mapping with R"
+subtitle: "A workshop on GIS and mapping with R: part 1"
 author: "Robin Lovelace & Jakub Nowosad"
 date: ""
 output:
@@ -35,7 +35,7 @@ output:
 
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(cache = TRUE)
+knitr::opts_chunk$set(cache = TRUE, fig.height = 4.5)
 ```
 
 # Getting and downloading data
@@ -307,7 +307,7 @@ schools_nz_polygons %>%
 
 # Selecting variables of interest
 
-```{r}
+```{r, message=FALSE}
 table(schools_nz_polygons$MOE.years)
 pryr::object_size(schools_nz_polygons)
 schools_nz_subset = schools_nz_polygons %>% 
@@ -434,7 +434,7 @@ ncol(schools_nz_polygons_joined)
 # Geometric operations
 
 
-```{r, fig.show='hold', warning=FALSE}
+```{r, fig.show='hold', warning=FALSE, message=FALSE}
 nz_simple = rmapshaper::ms_simplify(nz, keep = 0.02)
 nz_buffer = sf::st_buffer(sf::st_union(nz), dist = 22000)
 plot(sf::st_geometry(nz_simple))
